@@ -5,6 +5,8 @@
 # TODOS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // todos:
+- [Search Activity]
+    load suggestion apps on app request
 
 - [Section Activity]
     make possible to load data through api (apps section)
@@ -16,7 +18,7 @@
     when application is already installed show button to open the app
     (tried but get hard time on opening different applications)
 
-- [Search Activity](Contact)
+- [Search Activity]
     make the content for the contact page
 
 - [ALL]
