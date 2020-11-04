@@ -1,0 +1,53 @@
+<resources>
+<!-- GLOBAL -->
+    <string name="app_name">Applications</string>
+
+    <string name="search_label"                 translatable="false">Search</string>
+    <string name="default_text_app_title"       translatable="false">...</string>
+    <string name="default_start_value"          translatable="false">4.4</string>
+    <string name="default_section_title"        translatable="false">...</string>
+    <string name="image_view_app_description"   translatable="false">icon image of the application</string>
+    <string name="title_activity_specific"      translatable="false">SpecificActivity</string>
+    <string name="defaultTitleSearch"           translatable="false">title...</string>
+    <string name="request_text"                 translatable="false">Request</string>
+<!--    <string name="installed_text"               translatable="false">Installing</string>-->
+
+<!-- App -->
+    <string name="button_install">Install</string>
+    <string name="installing_text">Installing</string>
+    <string name="install_done_text">Already Installed</string>
+    <string name="about_this_app">About this app</string>
+    <string name="somethingWrong">Something want wrong</string>
+    <string name="internalError">Internal Server error</string>
+    <string name="btn_open_app">Open App</string>
+    <string name="txt_limit">limit</string>
+    <string name="txt_limit_default" translatable="false">0</string>
+    <string name="txt_limit_times_a_day">x usable a day</string>
+
+
+<!-- Home -->
+    <string name="search_hint">Search for apps &amp; websites</string>
+    <string name="recommended_text">Recommended for you</string>
+    <string name="home">Home</string>
+    <string name="categories">Categories</string>
+
+<!-- Search -->
+    <string name="application_text">Application Name</string>
+    <string name="contact_text">Contact</string>
+    <string name="dupe_request_text">"Already Requested."</string>
+    <string name="empty_request_text">"Failed, application name is empty."</string>
+    <string name="noInternet_request_text">You do not have a internet connection.</string>
+    <string name="already_request_text">Request already exists, We added the one from You to it.</string>
+    <string name="ok_request_text">Thanks, We will look at it.</string>
+
+<!-- No Connection -->
+    <string name="button_retry">Retry</string>
+    <string name="connection_content_txt">We will come back to you, when the connection is back</string>
+    <string name="connection_title_txt">You\'re offline</string>
+
+<!-- Error -->
+    <string name="error_title_text">Whoops i Failed</string>
+    <string name="error_content_text">Mechanic is coming :)</string>
+    <string name="todo">TODO</string>
+
+</resources>

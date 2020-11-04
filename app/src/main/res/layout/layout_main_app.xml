@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/background_light"
+    android:weightSum="10">
+
+    <LinearLayout
+        android:id="@+id/layoutHead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBackground"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/icon_cardView"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+
+            android:layout_margin="20dp"
+            android:background="@color/colorBackground"
+            android:backgroundTint="@color/colorBackground"
+            app:cardBackgroundColor="@color/colorBackground"
+            app:cardCornerRadius="15dp"
+            app:cardUseCompatPadding="true">
+
+            <ImageView
+                android:id="@+id/ic_appLogo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/original_logo" />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/txt_appTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:fontFamily="sans-serif-condensed-light"
+            android:text="Apk Center"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/layoutInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/layoutReviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txt_appReviewsStar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="4.5"
+                    android:textColor="#000000" />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginLeft="3dp"
+                    app:srcCompat="@drawable/black_star" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_appReviews"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="20M reviews"
+                android:textColor="@color/txt_gray" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="1dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:background="@color/view_line_white" />
+
+        <LinearLayout
+            android:id="@+id/download_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_appDownloads"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="500M+"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="Downloads"
+                android:textColor="@color/txt_gray" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="1dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:background="@color/view_line_white"
+            android:foregroundGravity="center" />
+
+        <LinearLayout
+            android:id="@+id/pegi_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/img_appPegi"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:foregroundGravity="center"
+                app:srcCompat="@drawable/pegi_3" />
+
+            <TextView
+                android:id="@+id/pegi_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="Pegi"
+                android:textColor="@color/txt_gray" />
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/layout_install"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:paddingTop="10dp"
+        >
+        <Button
+            android:id="@+id/btn_appInstall"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@drawable/button_background_green"
+
+            android:text="@string/button_install"
+            android:textAllCaps="false"
+            android:textColor="@color/colorBackground"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.75" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cView_appLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/view_line_white"
+            app:cardCornerRadius="3dp"
+            android:layout_gravity="center_horizontal"
+            app:cardUseCompatPadding="true"
+            android:visibility="invisible">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/txt_appLimit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_limit_default"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="1dp"
+                    android:text="@string/txt_limit_times_a_day"
+                    android:textColor="#4E4E4E" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_appImages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
+    <RelativeLayout
+        android:id="@+id/rl_appAbout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/layout_background"
+        android:clickable="true">
+
+
+        <TextView
+            android:id="@+id/txt_appAbout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_toStartOf="@+id/specificBack"
+            android:fontFamily="sans-serif-thin"
+            android:paddingStart="7dp"
+            android:text="@string/about_this_app"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/specificBack"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:contentDescription="@string/image_view_app_description"
+            android:textColor="#FFF"
+            app:srcCompat="@drawable/arrow_right_gray" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/txt_appPottedAbout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:text="lora ipsum"
+        android:textColor="@color/txt_gray"
+        android:textSize="14sp" />
+
+
+</LinearLayout>
+
+

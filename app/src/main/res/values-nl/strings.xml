@@ -1,0 +1,40 @@
+<resources>
+<!-- GLOBAL -->
+    <string name="app_name">Applicaties</string>
+
+<!-- App -->
+    <string name="button_install">Installeren</string>
+    <string name="installing_text">Aan het Installeren</string>
+    <string name="install_done_text">Al Geïnstalleerd</string>
+    <string name="about_this_app">Over deze app</string>
+    <string name="somethingWrong">Er is iets found gegaan</string>
+    <string name="internalError">Intern server error</string>
+    <string name="btn_open_app">Open App</string>
+    <string name="txt_limit">limiet</string>
+    <string name="txt_limit_times_a_day">x bruikbaar per dag</string>
+
+    <!-- Home -->
+    <string name="search_hint">Zoek voor apps &amp; websites</string>
+    <string name="recommended_text">Aanbevolen voor u</string>
+    <string name="home">Home</string>
+    <string name="categories">Categories</string>
+
+<!-- Search -->
+    <string name="application_text">Applicatie Naam</string>
+    <string name="contact_text">Contact</string>
+    <string name="dupe_request_text">"Heeft U al eerder aangevraagd."</string>
+    <string name="empty_request_text">Applicatie naam is leeg.</string>
+    <string name="noInternet_request_text">U Internet verbinding is niet correct.</string>
+    <string name="already_request_text">Aanvraag bestaat al, Uw aanvraag is er aan toegevoegd.</string>
+    <string name="ok_request_text">Dank U Wel, We zullen er naar kijken</string>
+
+<!-- No Connection -->
+    <string name="button_retry">Opnieuw proberen</string>
+    <string name="connection_content_txt">We komen bij u terug, als er weer verbinding is</string>
+    <string name="connection_title_txt">U bent offline</string>
+
+<!-- Error -->
+    <string name="error_title_text">Whoepsie ik Faal</string>
+    <string name="error_content_text">Monteur onder weg :)</string>
+
+</resources>

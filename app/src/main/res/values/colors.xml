@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorBackground">#FBFDFF</color>
+    <color name="white">#FFF</color>
+    <color name="black">#000</color>
+    <color name="light_gray">#E6E6E6</color>
+    <color name="txt_gray">#5C5C5C</color>
+    <color name="view_line_white">#ECECEC</color>
+    <color name="view_line_LGray">#CCCCCC</color>
+    <color name="tab_indicator">#03A9F4</color>
+    <color name="orange">#F44F03</color>
+    <color name="red">#F40303</color>
+</resources>
