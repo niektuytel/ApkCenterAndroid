@@ -15,7 +15,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetroClient {
 
-
     @NonNull
     private static Retrofit getRetrofitInstance() {
         return new Retrofit.Builder()

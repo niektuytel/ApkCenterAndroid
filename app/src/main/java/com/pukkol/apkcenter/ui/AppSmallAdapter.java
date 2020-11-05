@@ -29,6 +29,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 
+//import com.bumptech.glide.Glide;
+//import com.bumptech.glide.load.engine.DiskCacheStrategy;
+//import com.bumptech.glide.request.target.CustomTarget;
+//import com.bumptech.glide.request.transition.Transition;
+
 public class AppSmallAdapter extends RecyclerView.Adapter<AppSmallAdapter.AppRowHolder> {
 
     private List<AppSmallModel> mApps;

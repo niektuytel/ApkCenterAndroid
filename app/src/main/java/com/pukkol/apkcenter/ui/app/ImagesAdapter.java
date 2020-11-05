@@ -18,6 +18,10 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.pukkol.apkcenter.R;
 
+//import com.bumptech.glide.Glide;
+//import com.bumptech.glide.request.target.CustomTarget;
+//import com.bumptech.glide.request.transition.Transition;
+
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.RowHolder> {
 
     private Activity mContext;

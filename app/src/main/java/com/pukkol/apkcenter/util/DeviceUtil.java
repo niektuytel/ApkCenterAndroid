@@ -17,6 +17,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 
+//import org.jetbrains.annotations.Contract;
+
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -25,7 +27,9 @@ import java.util.Locale;
 
 public class DeviceUtil {
 
-    public static Point displaySize(Window context)
+    @NonNull
+    @Contract("_ -> new")
+    public static Point displaySize(@NonNull Window context)
     {
         DisplayMetrics metrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -33,7 +37,6 @@ public class DeviceUtil {
     }
 
     @NonNull
-    @Contract("_ -> new")
     public static Point navigationBarSize(Activity activity)
     {
         if(!hasNavigationBar(activity))

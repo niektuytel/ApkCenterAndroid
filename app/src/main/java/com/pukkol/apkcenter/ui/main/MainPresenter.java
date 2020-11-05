@@ -81,11 +81,6 @@ public class MainPresenter
         onReload(true);
     }
 
-//    public void onCloseDataBases() {
-//        mDbSearch.close();
-//        mDbInstalled.close();
-//    }
-
     public void onReload(boolean refreshData) {
         if(mMainView == null) return;
 

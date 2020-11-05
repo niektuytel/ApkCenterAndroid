@@ -2,8 +2,8 @@ package com.pukkol.apkcenter.data.remote.api.error;
 
 import androidx.annotation.NonNull;
 
-import com.pukkol.apkcenter.data.model.StatusModel;
 import com.pukkol.apkcenter.data.model.ErrorModel;
+import com.pukkol.apkcenter.data.model.StatusModel;
 import com.pukkol.apkcenter.data.remote.api.RetroClient;
 import com.pukkol.apkcenter.error.ExceptionCallback;
 

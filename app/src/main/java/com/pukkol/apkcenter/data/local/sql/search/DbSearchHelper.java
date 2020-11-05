@@ -23,6 +23,8 @@ import java.util.List;
 
 import retrofit2.Response;
 
+//import retrofit2.Response;
+
 public class DbSearchHelper implements Thread.UncaughtExceptionHandler {
     private static final String COUNTRY = DeviceUtil.getCountry();
     private static final String TAG = "DbSearchHelper";
@@ -155,7 +157,6 @@ public class DbSearchHelper implements Thread.UncaughtExceptionHandler {
         ContentValues cv = DbSearchProfile.toContentValues(model);
         return mDb.insert(sTableName, cv);
     }
-
 
     // private function
     @NonNull

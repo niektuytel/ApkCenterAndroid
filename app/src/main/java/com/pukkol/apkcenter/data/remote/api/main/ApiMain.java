@@ -21,11 +21,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ApiMain implements Thread.UncaughtExceptionHandler {
+
+public class ApiMain
+    implements
+        Thread.UncaughtExceptionHandler
+{
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String COUNTRY = DeviceUtil.getCountry();
 
-    private final ApiMainService mApi;
+    private final ApiMainService mRetroApi;
     private final onDataResponseListener mCallback;
 
     private final HashMap<String, Boolean> mEndLoading;
@@ -34,7 +38,7 @@ public class ApiMain implements Thread.UncaughtExceptionHandler {
     public ApiMain(onDataResponseListener callback) {
         mCallback = callback;
 
-        mApi = RetroClient.getMainApiService();
+        mRetroApi = RetroClient.getMainApiService();
         mAllApps = new HashMap<>();
         mEndLoading = new HashMap<>();
 
@@ -42,12 +46,12 @@ public class ApiMain implements Thread.UncaughtExceptionHandler {
     }
 
     public void getCategoryNames() {
-        if(mApi == null){
+        if(mRetroApi == null){
             mCallback.onCategoriesResponse(500, new ArrayList<>());
             return;
         }
 
-        mApi.categoryNames(COUNTRY).enqueue(new Callback<Map<String, String>>() {
+        mRetroApi.categoryNames(COUNTRY).enqueue(new Callback<Map<String, String>>() {
             @Override
             public void onResponse(@NonNull Call<Map<String, String>> call, @NonNull Response<Map<String, String>> response) {
                 ArrayList<Categorymodel> categories = mapToModels(response.body());
@@ -62,7 +66,7 @@ public class ApiMain implements Thread.UncaughtExceptionHandler {
     }
 
     public void getCategoryApps(final String categoryName, int startIndex, int endIndex) {
-        if(mAllApps == null || mApi == null || categoryName.equals("")){
+        if(mAllApps == null || mRetroApi == null || categoryName.equals("")){
             mCallback.onAppsResponse(500, new ArrayList<>(), categoryName);
             return;
         }
@@ -84,7 +88,7 @@ public class ApiMain implements Thread.UncaughtExceptionHandler {
 
         }
 
-        mApi.categoryApps(categoryName).enqueue(new Callback<List<AppSmallModel>>() {
+        mRetroApi.categoryApps(categoryName).enqueue(new Callback<List<AppSmallModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<AppSmallModel>> call, @NonNull Response<List<AppSmallModel>> response) {
                 List<AppSmallModel> apps = new ArrayList<>();
@@ -146,8 +150,6 @@ public class ApiMain implements Thread.UncaughtExceptionHandler {
 
         Log.i(TAG, "start index: " + indexBegin + "\t|\tending index: " + indexEnd);
     }
-
-
 
 
     public interface onDataResponseListener extends ExceptionCallback.onExceptionListener{
