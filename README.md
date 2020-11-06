@@ -6,13 +6,16 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // todos:
 - [Search Activity]
-    load suggestion apps on app request
+    (working on) load suggestion apps on app request
 
 - [Section Activity]
     make possible to load data through api (apps section)
 
 - [Search Activity]
-    add icon on search list to api results
+    (working on) add icon on search list to api results
+    
+    merge local storage matches with the api matches into 1 list of value results
+        
 
 - [App Activity]
     when application is already installed show button to open the app
