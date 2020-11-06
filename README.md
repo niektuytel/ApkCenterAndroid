@@ -13,13 +13,6 @@
 
 - [Search Activity]
     (working on) add icon on search list to api results
-    
-    merge local storage matches with the api matches into 1 list of value results
-        
-
-- [App Activity]
-    when application is already installed show button to open the app
-    (tried but get hard time on opening different applications)
 
 - [Search Activity]
     make the content for the contact page
