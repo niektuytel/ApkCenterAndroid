@@ -27,8 +27,11 @@
     <string name="noInternet_request_text">You do not have a internet connection.</string>
     <string name="already_request_text">Request already exists, We added the one from You to it.</string>
     <string name="ok_request_text">Thanks, We will look at it.</string>
+    <string name="request_text">Request</string>
+    <string name="request_hint_text">App name / Website</string>
 
-<!-- No Connection -->
+
+    <!-- No Connection -->
     <string name="button_retry">Retry</string>
     <string name="connection_content_txt">We will come back to you, when the connection is back</string>
     <string name="connection_title_txt">You\'re offline</string>

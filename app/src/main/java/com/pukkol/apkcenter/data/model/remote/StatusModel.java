@@ -1,4 +1,4 @@
-package com.pukkol.apkcenter.data.model;
+package com.pukkol.apkcenter.data.model.remote;
 
 import com.google.gson.annotations.SerializedName;
 

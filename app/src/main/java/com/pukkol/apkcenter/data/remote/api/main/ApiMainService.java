@@ -1,6 +1,6 @@
 package com.pukkol.apkcenter.data.remote.api.main;
 
-import com.pukkol.apkcenter.data.model.application.AppSmallModel;
+import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
 
 import java.util.List;
 import java.util.Map;

@@ -1,5 +1,7 @@
 package com.pukkol.apkcenter.data.model.application;
 
+import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
+
 import java.util.List;
 
 public class AppSmallSectionModel {

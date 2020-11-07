@@ -3,9 +3,8 @@ package com.pukkol.apkcenter.ui.search;
 public interface SearchMvpView {
     void showError();
     void showErrorInternet();
-    void showApplications(SearchAdapter adapter, boolean hideMenu);
-    void showMenus();
+    void showMenu(boolean updateData);
+    <T> void showAdapter(SearchListAdapter<T> adapter, String searchHint);
     void showContact();
-    void showRequest();
-    void updateMessage(String title);
+    <T> void showRequestButton(SearchListAdapter<T> adapter);
 }

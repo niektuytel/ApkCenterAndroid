@@ -13,7 +13,7 @@ import com.pukkol.apkcenter.R;
 import com.pukkol.apkcenter.data.local.sql.installed.DbInstalledHelper;
 import com.pukkol.apkcenter.data.local.sql.search.DbSearchHelper;
 import com.pukkol.apkcenter.data.model.Categorymodel;
-import com.pukkol.apkcenter.data.model.application.AppSmallModel;
+import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
 import com.pukkol.apkcenter.data.model.application.AppSmallSectionModel;
 import com.pukkol.apkcenter.data.remote.api.main.ApiMain;
 import com.pukkol.apkcenter.error.ErrorHandler;

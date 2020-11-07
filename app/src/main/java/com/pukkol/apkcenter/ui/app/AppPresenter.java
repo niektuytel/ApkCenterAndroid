@@ -17,7 +17,7 @@ import com.pukkol.apkcenter.data.local.sql.installed.DbInstalledHelper;
 import com.pukkol.apkcenter.data.local.sql.search.DbSearchHelper;
 import com.pukkol.apkcenter.data.model.InstalledModel;
 import com.pukkol.apkcenter.data.model.application.AppModel;
-import com.pukkol.apkcenter.data.model.application.AppSmallModel;
+import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
 import com.pukkol.apkcenter.data.remote.api.apk.ApiApk;
 import com.pukkol.apkcenter.data.remote.api.app.ApiApp;
 import com.pukkol.apkcenter.error.ErrorHandler;
@@ -256,12 +256,13 @@ public class AppPresenter
     private void updateSearch() {
         String title = mAppModel.getTitle();
         String icon = mAppModel.getApk().getIcon();
+        String websiteUrl = mAppModel.getWebsiteUrl();
         double star = Double.parseDouble(mAppModel.getApk().getReviews().getStar());
         int used = 1;
         String limit = mAppModel.getLimit();
         long currentTime = System.currentTimeMillis();
 
-        AppSmallModel model = new AppSmallModel(title, icon, star, used, limit, currentTime);
+        AppSmallModel model = new AppSmallModel(title, icon, websiteUrl, star, used, limit, currentTime);
         mDbSearch.updateSearch(model);
     }
 

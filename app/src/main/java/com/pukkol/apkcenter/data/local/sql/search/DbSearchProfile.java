@@ -4,7 +4,7 @@ import android.content.ContentValues;
 
 import androidx.annotation.NonNull;
 
-import com.pukkol.apkcenter.data.model.application.AppSmallModel;
+import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
 
 public class DbSearchProfile {
 
@@ -15,6 +15,7 @@ public class DbSearchProfile {
 
         public static final String COLUMN_TITLE = "SEARCH_TITLE";
         public static final String COLUMN_ICON = "SEARCH_ICON";
+        public static final String COLUMN_WEBSITE_URL = "SEARCH_WEBSITE_URL";
         public static final String COLUMN_STAR = "SEARCH_STAR";
         public static final String COLUMN_USED = "SEARCH_USED";
         public static final String COLUMN_LIMIT = "SEARCH_LIMIT";
@@ -26,6 +27,7 @@ public class DbSearchProfile {
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_TITLE + " TEXT, " +
                     COLUMN_ICON + " TEXT, " +
+                    COLUMN_WEBSITE_URL + " TEXT, " +
                     COLUMN_STAR + " REAL, " +
                     COLUMN_USED + " INTEGER, " +
                     COLUMN_LIMIT + " TEXT, " +
@@ -47,6 +49,7 @@ public class DbSearchProfile {
 
         values.put(Table.COLUMN_TITLE, model.getTitle());
         values.put(Table.COLUMN_ICON, model.getIcon());
+        values.put(Table.COLUMN_WEBSITE_URL, model.getWebsiteUrl());
         values.put(Table.COLUMN_STAR, model.getStar());
         values.put(Table.COLUMN_USED, model.getUsed());
         values.put(Table.COLUMN_LIMIT, model.getLimit());

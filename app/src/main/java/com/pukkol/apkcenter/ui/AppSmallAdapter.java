@@ -21,18 +21,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.pukkol.apkcenter.R;
-import com.pukkol.apkcenter.data.model.application.AppSmallModel;
+import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
 import com.pukkol.apkcenter.error.ErrorHandler;
 import com.pukkol.apkcenter.util.DeviceUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
-
-//import com.bumptech.glide.Glide;
-//import com.bumptech.glide.load.engine.DiskCacheStrategy;
-//import com.bumptech.glide.request.target.CustomTarget;
-//import com.bumptech.glide.request.transition.Transition;
 
 public class AppSmallAdapter extends RecyclerView.Adapter<AppSmallAdapter.AppRowHolder> {
 
@@ -166,38 +161,4 @@ public class AppSmallAdapter extends RecyclerView.Adapter<AppSmallAdapter.AppRow
     {
         void onItemClicked(View view, AppSmallModel app);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

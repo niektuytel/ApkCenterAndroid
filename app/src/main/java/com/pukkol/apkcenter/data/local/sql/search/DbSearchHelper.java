@@ -9,12 +9,11 @@ import androidx.annotation.NonNull;
 
 import com.pukkol.apkcenter.data.local.sql.DbOpenHelper;
 import com.pukkol.apkcenter.data.model.application.AppModel;
-import com.pukkol.apkcenter.data.model.application.AppSmallModel;
+import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
 import com.pukkol.apkcenter.data.remote.api.RetroClient;
 import com.pukkol.apkcenter.data.remote.api.app.ApiAppService;
 import com.pukkol.apkcenter.error.ExceptionCallback.onExceptionListener;
 import com.pukkol.apkcenter.util.DeviceUtil;
-import com.pukkol.apkcenter.util.Sextet;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ public class DbSearchHelper implements Thread.UncaughtExceptionHandler {
     private static final String sColumnTitleName = DbSearchProfile.Table.COLUMN_TITLE;
     private static final String sColumnIconName = DbSearchProfile.Table.COLUMN_ICON;
     private static final String sColumnStarName = DbSearchProfile.Table.COLUMN_STAR;
+    private static final String sColumnWebsiteUrlName = DbSearchProfile.Table.COLUMN_WEBSITE_URL;
     private static final String sColumnIdName = DbSearchProfile.Table.COLUMN_ID;
     private static final String sColumnUsedName = DbSearchProfile.Table.COLUMN_USED;
     private static final String sColumnLimitName = DbSearchProfile.Table.COLUMN_LIMIT;
@@ -121,20 +121,17 @@ public class DbSearchHelper implements Thread.UncaughtExceptionHandler {
     }
 
     public List<AppSmallModel> getRecommended() {
-        List<AppSmallModel> models = new ArrayList<>();
-
         String query = "SELECT * FROM " + sTableName + " ORDER BY " + sColumnUsedName + " DESC LIMIT " + iRecommendedLimit;
-        List<Sextet<String, String, Double, Integer, String, Long>> Sextets =
-                mDb.getSextetValuesOnQuery(
-                        query, new Sextet<>(sColumnTitleName, sColumnIconName, sColumnStarName, sColumnUsedName, sColumnLimitName, sColumnLatestUpdateName)
-                );
+        List<String> columnNames = new ArrayList<>();
+        columnNames.add(sColumnTitleName);
+        columnNames.add(sColumnIconName);
+        columnNames.add(sColumnWebsiteUrlName);
+        columnNames.add(sColumnStarName);
+        columnNames.add(sColumnUsedName);
+        columnNames.add(sColumnLimitName);
+        columnNames.add(sColumnLatestUpdateName);
 
-        for( Sextet<String, String, Double, Integer, String, Long> sextet : Sextets) {
-            AppSmallModel model = new AppSmallModel(sextet.first, sextet.second, sextet.third, sextet.fourth, sextet.fifth, sextet.sixth);
-            models.add(model);
-        }
-
-        return models;
+        return mDb.getAppSmallModelsOnQuery(query, columnNames);
     }
 
     public boolean updateSearch(AppSmallModel model) {

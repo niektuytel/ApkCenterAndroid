@@ -5,7 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.pukkol.apkcenter.data.model.Categorymodel;
-import com.pukkol.apkcenter.data.model.application.AppSmallModel;
+import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
 import com.pukkol.apkcenter.data.remote.api.RetroClient;
 import com.pukkol.apkcenter.error.ExceptionCallback;
 import com.pukkol.apkcenter.ui.main.MainActivity;

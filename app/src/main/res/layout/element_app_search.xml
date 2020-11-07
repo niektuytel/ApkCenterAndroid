@@ -1,40 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/layout_searchItem"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/colorBackground"
     android:padding="5dp"
     >
 
     <ImageView
+        android:id="@+id/img_search"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:padding="10dp"
-        app:srcCompat="@drawable/icon_clock" />
-
-    <LinearLayout
+        android:layout_gravity="start"
+        android:padding="5dp"
+        />
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_gravity="center_vertical">
+        >
 
-        <TextView
-            android:id="@+id/view_title"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center_vertical|start"
-            android:text="Title application"
-            android:textColor="@color/black"
-            android:layout_marginStart="5dp"
-            />
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/layout_request_counter"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/text_searchTitle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5"
+                android:gravity="center_vertical|start"
+                android:text="@string/title_application"
+                android:textColor="@color/black"
+                android:layout_marginStart="5dp"
+                android:visibility="visible"
+                tools:ignore="NestedWeights" />
+            <TextView
+                android:id="@+id/text_searchWebsiteUrl"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5"
+                android:gravity="center_vertical|start"
+                android:text="@string/http_dummy_com"
+                android:textColor="#616161"
+                android:textSize="12sp"
+                android:layout_marginStart="5dp"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_request_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
+
+            <ImageView
+                android:id="@+id/btn_app_add"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp"
+                android:src="@drawable/ic_arrow_vote"
+                tools:ignore="RtlSymmetry"
+                />
+
+            <TextView
+                android:id="@+id/txt_app_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textColor="#575757"
+                android:textSize="20sp"
+                android:text="@string/txt_limit_default"
+                />
+
+            <ImageView
+                android:id="@+id/btn_app_remove"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingBottom="10dp"
+                android:paddingEnd="10dp"
+                android:src="@drawable/ic_arrow_vote"
+                android:rotation="180"
+                android:visibility="visible"
+                tools:ignore="RtlSymmetry"
+                />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
 
 
 
-
-
-    </LinearLayout>
 
 </LinearLayout>
 

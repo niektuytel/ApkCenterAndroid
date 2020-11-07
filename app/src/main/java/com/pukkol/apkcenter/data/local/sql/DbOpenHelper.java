@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import com.pukkol.apkcenter.data.local.sql.error.DbErrorProfile;
 import com.pukkol.apkcenter.data.local.sql.installed.DbInstalledProfile;
 import com.pukkol.apkcenter.data.local.sql.search.DbSearchProfile;
-import com.pukkol.apkcenter.util.Sextet;
+import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,28 +167,48 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     }
 
 
-
-
-    public List<Sextet<String, String, Double, Integer, String, Long>> getSextetValuesOnQuery(String query, Sextet<String, String, String, String, String, String> columnNames) {
+    public List<AppSmallModel> getAppSmallModelsOnQuery(String query, List<String> columnNames) {
         Cursor cursor = mDb.rawQuery(query, null);
-        List<Sextet<String, String, Double, Integer, String, Long>> Sextets = new ArrayList<>();
+        List<AppSmallModel> models = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             do {
-                String first = cursor.getString(cursor.getColumnIndexOrThrow(columnNames.first));
-                String second = cursor.getString(cursor.getColumnIndexOrThrow(columnNames.second));
-                double third = cursor.getDouble(cursor.getColumnIndexOrThrow(columnNames.third));
-                int fourth = cursor.getInt(cursor.getColumnIndexOrThrow(columnNames.fourth));
-                String fifth = cursor.getString(cursor.getColumnIndexOrThrow(columnNames.fifth));
-                long sixth = cursor.getLong(cursor.getColumnIndexOrThrow(columnNames.sixth));
+                String title = cursor.getString(
+                        cursor.getColumnIndexOrThrow(columnNames.get(0))
+                );
 
-                Sextets.add(new Sextet<>(first, second, third, fourth, fifth, sixth));
+                String icon = cursor.getString(
+                        cursor.getColumnIndexOrThrow(columnNames.get(1))
+                );
+
+                String websiteUrl = cursor.getString(
+                        cursor.getColumnIndexOrThrow(columnNames.get(2))
+                );
+
+                double star = cursor.getDouble(
+                        cursor.getColumnIndexOrThrow(columnNames.get(3))
+                );
+
+                int used = cursor.getInt(
+                        cursor.getColumnIndexOrThrow(columnNames.get(4))
+                );
+
+
+                String limit = cursor.getString(
+                        cursor.getColumnIndexOrThrow(columnNames.get(5))
+                );
+
+                long latestUpdate = cursor.getLong(
+                        cursor.getColumnIndexOrThrow(columnNames.get(6))
+                );
+
+                models.add(new AppSmallModel(title, icon, websiteUrl, star, used, limit, latestUpdate));
             } while (cursor.moveToNext());
         }
 
         // clean
         cursor.close();
-        return Sextets;
+        return models;
     }
 
     public Pair<Integer, Integer> getPairValueOnName(String tableName, String columnName, String columnValue, Pair<String, String> columnNames) {

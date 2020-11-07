@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pukkol.apkcenter.R;
-import com.pukkol.apkcenter.data.model.application.AppSmallModel;
+import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
 import com.pukkol.apkcenter.data.model.application.AppSmallSectionModel;
 import com.pukkol.apkcenter.error.ExceptionCallback;
 import com.pukkol.apkcenter.util.DeviceUtil;

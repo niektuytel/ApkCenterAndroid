@@ -9,7 +9,6 @@
     <string name="image_view_app_description"   translatable="false">icon image of the application</string>
     <string name="title_activity_specific"      translatable="false">SpecificActivity</string>
     <string name="defaultTitleSearch"           translatable="false">title...</string>
-    <string name="request_text"                 translatable="false">Request</string>
 <!--    <string name="installed_text"               translatable="false">Installing</string>-->
 
 <!-- App -->
@@ -30,6 +29,7 @@
     <string name="recommended_text">Recommended for you</string>
     <string name="home">Home</string>
     <string name="categories">Categories</string>
+    <string name="request_hint_text">App name / Website</string>
 
 <!-- Search -->
     <string name="application_text">Application Name</string>
@@ -39,6 +39,7 @@
     <string name="noInternet_request_text">You do not have a internet connection.</string>
     <string name="already_request_text">Request already exists, We added the one from You to it.</string>
     <string name="ok_request_text">Thanks, We will look at it.</string>
+    <string name="request_text">Request</string>
 
 <!-- No Connection -->
     <string name="button_retry">Retry</string>
@@ -49,5 +50,7 @@
     <string name="error_title_text">Whoops i Failed</string>
     <string name="error_content_text">Mechanic is coming :)</string>
     <string name="todo">TODO</string>
+    <string name="http_dummy_com">http://dummy.com</string>
+    <string name="title_application">Title application</string>
 
 </resources>

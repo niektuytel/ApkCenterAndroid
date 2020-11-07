@@ -27,8 +27,11 @@
     <string name="noInternet_request_text">U Internet verbinding is niet correct.</string>
     <string name="already_request_text">Aanvraag bestaat al, Uw aanvraag is er aan toegevoegd.</string>
     <string name="ok_request_text">Dank U Wel, We zullen er naar kijken</string>
+    <string name="request_text">Aanvragen</string>
+    <string name="request_hint_text">App naam / Website</string>
 
-<!-- No Connection -->
+
+    <!-- No Connection -->
     <string name="button_retry">Opnieuw proberen</string>
     <string name="connection_content_txt">We komen bij u terug, als er weer verbinding is</string>
     <string name="connection_title_txt">U bent offline</string>

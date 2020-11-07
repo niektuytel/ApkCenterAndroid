@@ -6,7 +6,7 @@ import com.pukkol.apkcenter.data.remote.api.apk.ApiApkService;
 import com.pukkol.apkcenter.data.remote.api.app.ApiAppService;
 import com.pukkol.apkcenter.data.remote.api.error.ApiErrorService;
 import com.pukkol.apkcenter.data.remote.api.main.ApiMainService;
-import com.pukkol.apkcenter.data.remote.api.request.ApiRequestService;
+import com.pukkol.apkcenter.data.remote.api.search.ApiRequestService;
 import com.pukkol.apkcenter.data.remote.api.search.ApiSearchService;
 import com.pukkol.apkcenter.util.API;
 

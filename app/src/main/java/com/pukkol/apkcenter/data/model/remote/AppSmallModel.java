@@ -1,4 +1,4 @@
-package com.pukkol.apkcenter.data.model.application;
+package com.pukkol.apkcenter.data.model.remote;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -9,6 +9,8 @@ public class AppSmallModel {
     @SerializedName("icon")
     private String icon;
 
+    private String websiteUrl;
+
     @SerializedName("star")
     private double star;
 
@@ -18,9 +20,10 @@ public class AppSmallModel {
 
     private long latestUpdate;
 
-    public AppSmallModel(String title, String icon, double star, int used, String limit, long latestUpdate) {
+    public AppSmallModel(String title, String icon, String websiteUrl, double star, int used, String limit, long latestUpdate) {
         this.title = title;
         this.icon = icon;
+        this.websiteUrl = websiteUrl;
         this.star = star;
         this.used = used;
         this.limit = limit;
@@ -32,6 +35,7 @@ public class AppSmallModel {
         return "AppSmallModel{" +
                 "title='" + title + '\'' +
                 ", icon='" + icon + '\'' +
+                ", websiteUrl='" + websiteUrl + '\'' +
                 ", star=" + star +
                 ", used=" + used +
                 ", limit='" + limit + '\'' +
@@ -85,5 +89,13 @@ public class AppSmallModel {
 
     public void setLatestUpdate(long latestUpdate) {
         this.latestUpdate = latestUpdate;
+    }
+
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
     }
 }
