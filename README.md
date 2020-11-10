@@ -13,9 +13,6 @@
     add dagger to project
 # bugs:
 
-- [Main Activity, Section Activity, App Activity]
-    main thread freeze when on glide loading images (~40 frames)
-
 - [App Activity]
     webView contains deprecated stuff and some Errors
 
