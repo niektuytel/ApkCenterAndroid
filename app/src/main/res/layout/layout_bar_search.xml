@@ -34,6 +34,7 @@
         android:layout_height="50dp"
         android:paddingStart="10dp"
         android:background="@null"
+        android:hint="@string/search_hint"
         android:textColorHint="@color/txt_gray"
 
         android:importantForAutofill="no"
@@ -42,18 +43,6 @@
         android:textColorHighlight="#009688"
         android:textColorLink="#818181"
         tools:ignore="RtlSymmetry" />
-
-    <Button
-        android:id="@+id/btn_request_app"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="@drawable/button_background_blue_border"
-        android:text="@string/request_text"
-        android:textColor="#404040"
-        android:padding="10dp"
-        android:textAllCaps="false"
-        android:visibility="gone"
-        />
 
 </LinearLayout>
 
@@ -85,12 +74,16 @@
     android:visibility="visible"
     />
 
+
 <View
     android:id="@+id/view"
     android:layout_width="match_parent"
     android:layout_height="1dp"
     android:background="@color/view_line_white"
     tools:layout_editor_absoluteX="0dp" />
+
+
+
 
 </LinearLayout>
 

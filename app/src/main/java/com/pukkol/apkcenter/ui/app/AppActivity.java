@@ -139,12 +139,6 @@ public class AppActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        mAppPresenter.onCloseDataBases();
-    }
-
-    @Override
     public void onClick(@NonNull View view) {
         switch (view.getId())
         {

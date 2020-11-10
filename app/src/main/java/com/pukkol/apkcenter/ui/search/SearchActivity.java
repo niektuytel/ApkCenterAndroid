@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,8 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.pukkol.apkcenter.R;
+import com.pukkol.apkcenter.data.model.remote.AboutUsModel;
 import com.pukkol.apkcenter.data.model.remote.RequestModel;
-import com.pukkol.apkcenter.data.model.remote.SearchModel;
+import com.pukkol.apkcenter.data.model.SearchModel;
 import com.pukkol.apkcenter.error.ErrorHandler;
 import com.pukkol.apkcenter.error.ExceptionCallback;
 import com.pukkol.apkcenter.util.DeviceUtil;
@@ -41,9 +42,9 @@ public class SearchActivity
     private RecyclerView mLayoutSearchResults;
     private ConstraintLayout mLayoutConnection;
     private ConstraintLayout mLayoutError;
+    private ConstraintLayout mLayoutAbout;
 
     private EditText mTextSearch;
-    private Button mButtonRequest;
 
     private SearchPresenter<SearchModel> mPresenterSearch;
     private SearchPresenter<RequestModel> mPresenterRequest;
@@ -52,22 +53,20 @@ public class SearchActivity
     private String mLatestSearchValue = null;
     private int mLatestTabIndex = 0;
 
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DeviceUtil.fullDisplay(this, R.layout.activity_search);
 
         mTextSearch = findViewById(R.id.eText_searchBox);
-        mButtonRequest = findViewById(R.id.btn_request_app);
         ImageView buttonHome = findViewById(R.id.img_toHome);
         mLayoutSearchBar = findViewById(R.id.layout_searchBar);
         mLayoutMenu = findViewById(R.id.tabLayout);
         mLayoutSearchResults = findViewById(R.id.layout_searchResults);
         mLayoutConnection = findViewById(R.id.layout_connection);
         mLayoutError = findViewById(R.id.layout_error);
+        mLayoutAbout = findViewById(R.id.layout_AboutUs);
 
         buttonHome.setOnClickListener(this);
-        mButtonRequest.setOnClickListener(this);
         mLayoutMenu.addOnTabSelectedListener(this);
         mTextSearch.addTextChangedListener(this);
 
@@ -92,25 +91,25 @@ public class SearchActivity
         if(mLatestTabIndex == tab.getPosition()) return;
         mLatestTabIndex = tab.getPosition();
 
-        DeviceUtil.hideKeyboard(this);
+        new Thread(
+                () -> {
+                    DeviceUtil.hideKeyboard(this);
+                    switch (tab.getPosition()) {
+                        case 0:
+                            mPresenterSearch.onSearch("");
+                            break;
+                        case 1:
+                            mPresenterRequest.onSearch("");
+                            break;
+                        case 2:
+                            mPresenterRequest.onAboutUs();
+                            break;
+                        default:
+                            showError();
+                    }
+                }
+        ).start();
 
-        switch (tab.getPosition()) {
-            case 0:
-                new Thread(
-                        () -> mPresenterSearch.onSearch("")
-                ).start();
-                break;
-            case 1:
-                new Thread(
-                        () -> mPresenterRequest.onSearch("")
-                ).start();
-                break;
-            case 2:
-                showContact();
-                break;
-            default:
-                showError();
-        }
     }
 
     @Override
@@ -121,19 +120,15 @@ public class SearchActivity
 
     @Override
     public void onClick(@NonNull final View view) {
-        switch (view.getId()) {
-            case R.id.btn_request_app:
-                String input = mTextSearch.getText().toString();
-                SearchModel model = new SearchModel(input, "", "");
-                new Thread( () -> mPresenterRequest.onReportAdd(model) ).start();
-                runOnUiThread( () -> mTextSearch.setText("") );
-                break;
-            case R.id.img_toHome:
+        if (view.getId() == R.id.img_toHome) {
+            if(mTextSearch.getText().toString().length() > 0) {
+                mTextSearch.setText("");
+            } else {
                 DeviceUtil.hideKeyboard(this);
                 finish();
-                break;
-            default:
-                showError();
+            }
+        } else {
+            showError();
         }
     }
 
@@ -171,16 +166,9 @@ public class SearchActivity
     public void afterTextChanged(Editable editable) { }
 
     @Override
-    public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
-        onException(throwable);
+    public String currentInput() {
+        return mTextSearch.getText().toString();
     }
-
-    @Override
-    public void onException(Throwable throwable) {
-        new ErrorHandler(this, throwable);
-        showError();
-    }
-
 
     @Override
     public void showMenu(boolean updateData) {
@@ -205,10 +193,11 @@ public class SearchActivity
     }
 
     @Override
-    public <T> void showAdapter(SearchListAdapter<T> adapter, String searchHint) {
-        runOnUiThread( () -> mButtonRequest.setVisibility(View.GONE) );
-
-        if(mTextSearch.getHint() == searchHint ) {
+    public <T> void showAdapter(ListItemsAdapter<T> adapter, String searchHint) {
+        // check
+        if(mLatestTabIndex != 0 && mLatestTabIndex != 1) {
+            return;
+        } else if(mLayoutSearchResults.getAdapter() != null && mTextSearch.getHint() == searchHint ) {
             runOnUiThread(adapter::notifyDataSetChanged);
             return;
         }
@@ -227,21 +216,27 @@ public class SearchActivity
                     mLayoutConnection.setVisibility(View.GONE);
                     mLayoutError.setVisibility(View.GONE);
                     mLayoutSearchResults.setVisibility(View.VISIBLE);
+                    mLayoutAbout.setVisibility(View.GONE);
 
                 }
         );
     }
 
     @Override
-    public void showContact() {
-        runOnUiThread( () -> mButtonRequest.setVisibility(View.GONE) );
-
-        if(mTextSearch.getHint() == "") {
+    public void showContact(AboutUsModel model) {
+        // check
+        if(mLatestTabIndex != 2) {
+            return;
+        }else if(mTextSearch.getHint() == "") {
             return;
         }
 
         DeviceUtil.hideKeyboard(this);
         mLatestSearchValue = "";
+
+        TextView phoneNumber = findViewById(R.id.text_about_phoneNumber);
+        TextView emailAddress = findViewById(R.id.text_about_email);
+        TextView website = findViewById(R.id.text_about_website);
 
         runOnUiThread(
                 () -> {
@@ -250,27 +245,16 @@ public class SearchActivity
                     mLayoutSearchResults.setVisibility(View.GONE);
                     mLayoutConnection.setVisibility(View.GONE);
                     mLayoutError.setVisibility(View.GONE);
+                    mLayoutAbout.setVisibility(View.VISIBLE);
+
+                    phoneNumber.setText(model.getPhoneNumber());
+                    emailAddress.setText(model.getEmail());
+                    website.setText(model.getWebsite());
                 }
         );
-    }
-
-    @Override
-    public <T> void showRequestButton(SearchListAdapter<T> adapter) {
-        runOnUiThread(adapter::notifyDataSetChanged);
-
-        if(mButtonRequest.getVisibility() == View.VISIBLE) {
-            return;
-        }
-
-        runOnUiThread(
-            () -> {
-                mLayoutSearchBar.setVisibility(View.VISIBLE);
-                mLayoutSearchResults.setVisibility(View.VISIBLE);
-                mButtonRequest.setVisibility(View.VISIBLE);
-            }
-        );
 
     }
+
 
     @Override
     public void showError() {
@@ -281,6 +265,7 @@ public class SearchActivity
                     mLayoutError.setVisibility(View.VISIBLE);
                     mLayoutMenu.setVisibility(View.GONE);
                     mLayoutSearchBar.setVisibility(View.GONE);
+                    mLayoutAbout.setVisibility(View.GONE);
                 }
         );
     }
@@ -294,11 +279,20 @@ public class SearchActivity
                     mLayoutError.setVisibility(View.GONE);
                     mLayoutMenu.setVisibility(View.VISIBLE);
                     mLayoutSearchBar.setVisibility(View.VISIBLE);
+                    mLayoutAbout.setVisibility(View.GONE);
                 }
         );
     }
 
+    @Override
+    public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
+        onException(throwable);
+    }
 
-
+    @Override
+    public void onException(Throwable throwable) {
+        new ErrorHandler(this, throwable);
+        showError();
+    }
 
 }

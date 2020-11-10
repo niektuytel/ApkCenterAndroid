@@ -21,7 +21,7 @@
 
 <!-- Search -->
     <string name="application_text">Application Name</string>
-    <string name="contact_text">Contact</string>
+    <string name="contact_text">About us</string>
     <string name="dupe_request_text">"Already Requested."</string>
     <string name="empty_request_text">"Failed, application name is empty."</string>
     <string name="noInternet_request_text">You do not have a internet connection.</string>
@@ -29,6 +29,10 @@
     <string name="ok_request_text">Thanks, We will look at it.</string>
     <string name="request_text">Request</string>
     <string name="request_hint_text">App name / Website</string>
+    <string name="loading_outsiders">loading outsiders</string>
+    <string name="about_phone_number">Phone Number:</string>
+    <string name="about_email_address">Email Address:</string>
+    <string name="about_contact">Contact:</string>
 
 
     <!-- No Connection -->

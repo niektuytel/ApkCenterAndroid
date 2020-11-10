@@ -7,8 +7,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.pukkol.apkcenter.data.local.sql.DbOpenHelper;
-import com.pukkol.apkcenter.data.model.InstalledModel;
+import com.pukkol.apkcenter.data.local.sql.DatabaseHelper;
+import com.pukkol.apkcenter.data.model.local.InstalledModel;
 import com.pukkol.apkcenter.error.ExceptionCallback.onExceptionListener;
 
 import java.io.File;
@@ -20,16 +20,18 @@ public class DbInstalledHelper implements Thread.UncaughtExceptionHandler {
     private static String sColumnTitle = DbInstalledProfile.Table.COLUMN_TITLE;
     private static String sColumnFilename = DbInstalledProfile.Table.COLUMN_FILENAME;
 
-    private final DbOpenHelper mDb;
+    private final DatabaseHelper mDb;
     private final onExceptionListener mCallback;
 
     public DbInstalledHelper(Context context, onExceptionListener exceptionCallback) {
-        mDb = new DbOpenHelper(context);
+        mDb = DatabaseHelper.getInstance(context);
         mCallback = exceptionCallback;
     }
 
     public void close() {
-        mDb.close();
+        if(mDb != null) {
+            mDb.close();
+        }
     }
 
     public boolean addApplication(InstalledModel model) {

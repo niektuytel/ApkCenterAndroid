@@ -7,16 +7,21 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 
 import com.pukkol.apkcenter.R;
+import com.pukkol.apkcenter.data.local.sql.report.DbReportHelper;
 import com.pukkol.apkcenter.data.local.sql.search.DbSearchHelper;
-import com.pukkol.apkcenter.data.model.remote.SearchModel;
-import com.pukkol.apkcenter.data.model.remote.StatusModel;
-import com.pukkol.apkcenter.data.remote.api.search.SearchApiRequest;
-import com.pukkol.apkcenter.data.remote.api.search.SearchApiSearch;
+import com.pukkol.apkcenter.data.model.remote.AboutUsModel;
+import com.pukkol.apkcenter.data.model.remote.RequestModel;
+import com.pukkol.apkcenter.data.model.SearchModel;
+import com.pukkol.apkcenter.data.model.StatusModel;
+import com.pukkol.apkcenter.data.remote.api.search.ApiAboutUs;
+import com.pukkol.apkcenter.data.remote.api.search.SearchApiStructure;
+import com.pukkol.apkcenter.data.remote.api.search.ApiReport;
+import com.pukkol.apkcenter.data.remote.api.search.ApiSearch;
+import com.pukkol.apkcenter.data.remote.api.www.ApiApkCombo;
 import com.pukkol.apkcenter.error.ErrorHandler;
 import com.pukkol.apkcenter.error.ExceptionCallback;
 import com.pukkol.apkcenter.ui.app.AppActivity;
-import com.pukkol.apkcenter.data.remote.api.SearchApiStructure;
-import com.pukkol.apkcenter.ui.search.listElement.ElementAdapter;
+import com.pukkol.apkcenter.ui.search.listItem.ItemAdapter;
 import com.pukkol.apkcenter.util.API;
 import com.pukkol.apkcenter.util.DeviceUtil;
 
@@ -27,80 +32,130 @@ import java.util.List;
 public class SearchPresenter <Model>
     implements
         SearchApiStructure.onDataResponseListener,
-        ElementAdapter.onListItemClickListener,
+        ApiAboutUs.onDataResponseListener,
+        ItemAdapter.onListItemClickListener,
         ExceptionCallback.onExceptionListener,
         Thread.UncaughtExceptionHandler
 {
     private final Activity mActivity;
     private final Context mContext;
     private final SearchMvpView mSearchView;
+    private DbReportHelper mDbReport;
     private SearchApiStructure<Model> mApi;
+    private ApiApkCombo mApiApkCombo;
 
-    private final SearchListAdapter<Model> mAdapter;
+    private final ListItemsAdapter<Model> mAdapter;
 
-    private List<Model> mDefaultRow;
+    private List<Model> mDefaultModels;
     private String mSearchHint;
+    private String mLatestInput;
 
     public SearchPresenter(@NonNull Activity activity, int resHintId, SearchMvpView searchView) {
         mContext = mActivity = activity;
         mSearchHint = activity.getString(resHintId);
         mSearchView = searchView;
 
-        mAdapter = new SearchListAdapter<>(mActivity,this);
+        // load data
+        if(mActivity.getString(resHintId).equals(mActivity.getString(R.string.search_hint))) {
+            mAdapter = new ListItemsAdapter<>(mActivity, this);
+        } else {
+            mApiApkCombo = new ApiApkCombo(this);
+            mDbReport = new DbReportHelper(mContext, this);
+
+            mAdapter = new ListItemsAdapter<>(mActivity, mDbReport, this);
+        }
 
         new Thread( this::loadDefaultData ).start();
     }
 
     public void onSearch(@NonNull String input) {
+        mLatestInput = input;
         if(input.equals("") && API.isNetworkAvailable(mContext)) {
-            mAdapter.updateData(mDefaultRow);
+            mAdapter.updateData((ArrayList<Model>) (mDefaultModels));
             mSearchView.showAdapter(mAdapter, mSearchHint);
-        } else if (!API.isNetworkAvailable(mContext)) {
+        }
+        else if (!API.isNetworkAvailable(mContext)) {
             mSearchView.showErrorInternet();
+        }
+        else {
+            new Thread( () -> mApi.onSearch(input)).start();
+
+            // search apps from world wide web
+            if(mApiApkCombo != null) {
+                new Thread( () -> mApiApkCombo.onSearch(input)).start();
+            }
+        }
+    }
+
+    public void onReportAdd(RequestModel model){
+        mApi.onReportAdd(model);
+    }
+
+    public void onReportRemove(RequestModel model){
+        mApi.onReportRemove(model);
+    }
+
+    public void onAboutUs() {
+        ApiAboutUs apiAboutUs = new ApiAboutUs(this);
+        apiAboutUs.getAboutUs();
+    }
+
+
+    @Override
+    public void onSearchResponse(int responseCode, List<?> applications) {
+        if (responseCode == 500) {
+            mSearchView.showError();
         } else {
-            mApi.onSearch(input);
+            mAdapter.updateData((ArrayList<Model>) applications);
+            mSearchView.showAdapter(mAdapter, mSearchHint);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void onSearchResponse(int responseCode, List<?> applications) {
+    public void onSearchResponseCallback(int responseCode, List<?> applications, String onInput) {
         if(responseCode == 500) {
             mSearchView.showError();
             return;
-        } else if (applications == null) {
-
-            // Request model search for suggestions on the web
-            if(mSearchHint.equals(mActivity.getString(R.string.request_hint_text))) {
-                
-                // request google play or they have some information
-                // request google search machine or he found some website
-
-
-
-
-
-                mSearchView.showRequestButton(mAdapter);
-                return;
-            }
-
+        } else if( applications == null || applications.size() == 0) {
+            return;
         }
 
-
-        mAdapter.updateData((List<Model>) applications);
-        mSearchView.showAdapter(mAdapter, mSearchHint);
+        if(mLatestInput.equals(onInput)) {
+            mAdapter.addData((ArrayList<Model>) applications);
+            mSearchView.showAdapter(mAdapter, mSearchHint);
+        }
     }
 
-    public void onReportAdd(SearchModel model){
-        mApi.onReportAdd(model);
-
-        // store locally you installed it
+    @Override
+    public void onReportResponse(int responseCode, StatusModel response) {
+        if(responseCode == 500) {
+            mSearchView.showError();
+        } else if(!API.isNetworkAvailable(mContext)) {
+            mSearchView.showErrorInternet();
+        }
     }
 
-    public void onReportRemove(SearchModel model){
-        mApi.onReportRemove(model);
+    @Override
+    public void onAboutResponse(int responseCode, AboutUsModel model) {
+        if(responseCode == 500) {
+            mSearchView.showError();
+        } else if(!API.isNetworkAvailable(mContext)) {
+            mSearchView.showErrorInternet();
+        }
 
-        // store locally you requested it
+        mSearchView.showContact(model);
+    }
+
+
+    public void close() {
+        if(mDbReport != null) {
+            mDbReport.close();
+        }
+    }
+
+    @Override
+    public boolean isCurrentInput(String input) {
+        return mSearchView.currentInput().equals(input);
     }
 
     @Override
@@ -116,14 +171,6 @@ public class SearchPresenter <Model>
         }
     }
 
-    @Override
-    public void onReportResponse(int responseCode, StatusModel response) {
-        if(responseCode == 500) {
-            mSearchView.showError();
-        } else if(!API.isNetworkAvailable(mContext)) {
-            mSearchView.showErrorInternet();
-        }
-    }
 
     @Override
     public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
@@ -136,33 +183,30 @@ public class SearchPresenter <Model>
         mSearchView.showError();
     }
 
-    /*private functions*/
 
-    @SuppressWarnings("unchecked")
     private void loadDefaultData() {
-        mDefaultRow = new ArrayList<>();
+        mDefaultModels = new ArrayList<>();
 
         if(mSearchHint.equals(mActivity.getString(R.string.search_hint))) {
-            mApi = (SearchApiStructure<Model>) new SearchApiSearch(this);
+            mApi = (SearchApiStructure<Model>) new ApiSearch(this);
 
-            // default
+            // load storage
             DbSearchHelper dbSearch = new DbSearchHelper(mContext, this);
-            mDefaultRow = mApi.toModels(dbSearch.getRecommended(), (Model) new SearchModel());
+            mDefaultModels = mApi.toModels(dbSearch.getRecommended(), (Model) new SearchModel());
+
             onSearch("");
-
         } else {
-            mApi = (SearchApiStructure<Model>) new SearchApiRequest(this);
+            mApi = (SearchApiStructure<Model>) new ApiReport(this);
 
-            // load voted title name and what you vote
-
-            // default
+            // load default api
             if(API.isNetworkAvailable(mContext)){
                 try {
-                    mDefaultRow = mApi.getPopular();
+                    mDefaultModels = mApi.getPopular();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
     }
+
 }

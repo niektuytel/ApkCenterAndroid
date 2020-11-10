@@ -1,6 +1,6 @@
 package com.pukkol.apkcenter.data.remote.api.search;
 
-import com.pukkol.apkcenter.data.model.remote.SearchModel;
+import com.pukkol.apkcenter.data.model.SearchModel;
 
 import java.util.ArrayList;
 

@@ -1,6 +1,10 @@
 package com.pukkol.apkcenter.data.model.remote;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
+import com.pukkol.apkcenter.data.model.SearchModel;
+import com.pukkol.apkcenter.util.API;
 
 import java.util.Arrays;
 
@@ -27,6 +31,8 @@ public class RequestModel {
     @SerializedName("requestedTimes")
     private int requestedTimes;
 
+    public RequestModel() { }
+
     public RequestModel(String title, String[] websiteUrls, String icon, int wantDeletion, int wantAdding, String[] versions, int requestedTimes) {
         this.title = title;
         this.websiteUrls = websiteUrls;
@@ -35,6 +41,16 @@ public class RequestModel {
         this.wantAdding = wantAdding;
         this.versions = versions;
         this.requestedTimes = requestedTimes;
+    }
+
+    public RequestModel(@NonNull SearchModel model) {
+        this.title = model.getTitle();
+        this.websiteUrls = new String[]{model.getWebsiteUrl()};
+        this.icon = model.getIcon();
+        this.wantDeletion = 0;
+        this.wantAdding = 0;
+        this.versions = new String[]{API.APK_VERSION};
+        this.requestedTimes = 0;
     }
 
     @Override
@@ -105,4 +121,12 @@ public class RequestModel {
     public void setRequestedTimes(int requestedTimes) {
         this.requestedTimes = requestedTimes;
     }
+
+    public String getWebsiteUrl() {
+        if(this.websiteUrls.length > 0) {
+            return websiteUrls[0];
+        }
+        return "";
+    }
+
 }

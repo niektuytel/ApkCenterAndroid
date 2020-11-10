@@ -1,5 +1,6 @@
 package com.pukkol.apkcenter.ui.main;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.tabs.TabLayout;
 import com.pukkol.apkcenter.R;
 import com.pukkol.apkcenter.error.ErrorHandler;
-import com.pukkol.apkcenter.ui.AppSmallSectionAdapter;
 import com.pukkol.apkcenter.ui.base.BaseActivity;
+import com.pukkol.apkcenter.ui.main.adapter.SectionListAdapter;
 import com.pukkol.apkcenter.ui.search.SearchActivity;
 
 public class MainActivity
@@ -55,18 +56,16 @@ public class MainActivity
         mLayoutTab.addOnTabSelectedListener(this);
         buttonSearch.setOnClickListener(this);
 
+        mLayoutActivity.setLayoutManager(
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        );
+
         // send local stored errors to api
-        new Thread(
-                () -> new ErrorHandler(this, null)
-        ).start();
+        new Thread( () -> new ErrorHandler(this, null) ).start();
 
-
-        // run main activity
+        // setup
         new Thread (
-                () -> {
-                    mMainPresenter = new MainPresenter(this,this);
-                    runOnUiThread(this::onStart);
-                }
+                () -> mMainPresenter = new MainPresenter(this,this)
         ).start();
     }
 
@@ -75,15 +74,7 @@ public class MainActivity
         super.onStart();
         if (mMainPresenter == null) return;
 
-        new Thread(
-                () -> mMainPresenter.onStart()
-        ).start();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // mMainPresenter.onCloseDataBases();
+        new Thread( () -> mMainPresenter.onStart() ).start();
     }
 
     @Override
@@ -91,8 +82,14 @@ public class MainActivity
         super.onClick(view);
         if (view.getId() == R.id.button_Search) {
             Intent intent = new Intent(this, SearchActivity.class);
-            intent.putExtra("search", "");
-            startActivity(intent);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            PendingIntent pendingIntent =
+                    PendingIntent.getActivity(this, 0, intent, 0);
+            try {
+                pendingIntent.send();
+            } catch (PendingIntent.CanceledException e) {
+                mMainPresenter.onException(e);
+            }
         }
     }
 
@@ -106,7 +103,8 @@ public class MainActivity
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         if(mMainPresenter == null) return;
-        mMainPresenter.onTabSelected(tab.getPosition(), false);
+
+        new Thread( () -> mMainPresenter.onTabSelected(tab.getPosition(), false)).start();
     }
 
     @Override
@@ -115,17 +113,9 @@ public class MainActivity
     @Override
     public void onTabReselected(TabLayout.Tab tab) {}
 
-
     @Override
-    public void showApplications(AppSmallSectionAdapter adapter) {
-        runOnUiThread(
-                () -> {
-                    mLayoutActivity.setLayoutManager(
-                            new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-                    );
-                    mLayoutActivity.setAdapter(adapter);
-                }
-        );
+    public void showApplications(SectionListAdapter adapter) {
+        runOnUiThread( () -> mLayoutActivity.setAdapter(adapter) );
     }
 
     @Override
@@ -141,4 +131,13 @@ public class MainActivity
         );
     }
 
+    @Override
+    public String getRecommendedKey() {
+        return getString(R.string.recommended_text);
+    }
+
+    @Override
+    public String getHomeKey() {
+        return getString(R.string.home);
+    }
 }

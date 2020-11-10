@@ -1,5 +1,7 @@
 package com.pukkol.apkcenter.data.remote.api.app;
 
+import android.net.Uri;
+
 import androidx.annotation.NonNull;
 
 import com.pukkol.apkcenter.data.model.application.AppModel;
@@ -26,13 +28,15 @@ public class ApiApp
         mApi = RetroClient.getAppService();
     }
 
-    public void getApp(String title) {
+    public void getApp(String appTitle) {
         if(mApi == null){
             mCallback.onAppResponse(500, null);
             return;
         }
 
-        mApi.app(COUNTRY, title).enqueue(new Callback<AppModel>() {
+        String country = Uri.encode(COUNTRY);
+
+        mApi.app(country, appTitle).enqueue(new Callback<AppModel>() {
             @Override
             public void onResponse(@NonNull Call<AppModel> call, @NonNull Response<AppModel> response) {
                 mCallback.onAppResponse(response.code(), response.body());

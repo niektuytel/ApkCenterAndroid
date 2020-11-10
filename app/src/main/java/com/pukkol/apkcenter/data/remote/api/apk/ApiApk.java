@@ -1,5 +1,6 @@
 package com.pukkol.apkcenter.data.remote.api.apk;
 
+import android.net.Uri;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
@@ -29,10 +30,12 @@ public class ApiApk
         mApi = RetroClient.getApkService();
     }
 
-    public void downloadApk(String title, final String filename) {
+    public void downloadApk(String appTitle, final String filename) {
         if(mApi == null) {
             return;
         }
+
+        String title = Uri.encode(appTitle);
 
         mApi.downloadApk(title).enqueue(new Callback<ResponseBody>() {
             @Override

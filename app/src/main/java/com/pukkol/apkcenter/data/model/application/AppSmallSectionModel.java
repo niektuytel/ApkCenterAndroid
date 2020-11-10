@@ -1,6 +1,6 @@
 package com.pukkol.apkcenter.data.model.application;
 
-import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
+import com.pukkol.apkcenter.data.model.AppSmallModel;
 
 import java.util.List;
 
@@ -8,25 +8,25 @@ public class AppSmallSectionModel {
 
     private String mTitle;
     private List<AppSmallModel> mApps;
-    private Integer mSectionID;
-    private Boolean mIsSql;
+//    private Integer mSectionID;
+//    private Boolean mIsSql;
 
-    public AppSmallSectionModel(List<AppSmallModel> apps, int layoutID) {
+//    public AppSmallSectionModel(List<AppSmallModel> apps/*, int layoutID*/) {
+//        mApps = apps;
+////        mSectionID = layoutID;
+//        mIsSql = false;
+//    }
+
+    public AppSmallSectionModel(List<AppSmallModel> apps/*,*//* int layoutID,*/ /*boolean isSql*/) {
         mApps = apps;
-        mSectionID = layoutID;
-        mIsSql = false;
+//        mSectionID = layoutID;
+//        mIsSql = isSql;
     }
 
-    public AppSmallSectionModel(List<AppSmallModel> apps, int layoutID, boolean isSql) {
-        mApps = apps;
-        mSectionID = layoutID;
-        mIsSql = isSql;
-    }
-
-    public AppSmallSectionModel(String title, List<AppSmallModel> apps, int layoutID, boolean isSql) {
+    public AppSmallSectionModel(String title, List<AppSmallModel> apps/*,*/ /*int layoutID,*/ /*boolean isSql*/) {
         mTitle = title;
-        mSectionID = layoutID;
-        mIsSql = isSql;
+//        mSectionID = layoutID;
+//        mIsSql = isSql;
         mApps = apps;
     }
 
@@ -36,18 +36,18 @@ public class AppSmallSectionModel {
         return "SmallAppSectionModel{" +
                 "mTitle='" + mTitle + '\'' +
                 ", mApps=" + mApps +
-                ", mSectionID=" + mSectionID +
-                ", mIsSql=" + mIsSql +
+//                ", mSectionID=" + mSectionID +
+//                ", mIsSql=" + mIsSql +
                 '}';
     }
 
-    public Integer getSectionID() {
-        return mSectionID;
-    }
-
-    public void setSectionID(Integer sectionID) {
-        mSectionID = sectionID;
-    }
+//    public Integer getSectionID() {
+//        return mSectionID;
+//    }
+//
+//    public void setSectionID(Integer sectionID) {
+//        mSectionID = sectionID;
+//    }
 
     public String getTitle() {
         return mTitle;
@@ -57,19 +57,19 @@ public class AppSmallSectionModel {
         mTitle = title;
     }
 
-    public List<AppSmallModel> getApps() {
+    public List<AppSmallModel> getModels() {
         return mApps;
     }
 
-    public void setApps(List<AppSmallModel> apps) {
+    public void setModels(List<AppSmallModel> apps) {
         mApps = apps;
     }
 
-    public Boolean getIsSql() {
-        return mIsSql;
-    }
-
-    public void setIsSql(Boolean isSql) {
-        mIsSql = isSql;
-    }
+//    public Boolean getIsSql() {
+//        return mIsSql;
+//    }
+//
+//    public void setIsSql(Boolean isSql) {
+//        mIsSql = isSql;
+//    }
 }

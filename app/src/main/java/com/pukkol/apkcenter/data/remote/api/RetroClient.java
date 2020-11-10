@@ -6,7 +6,9 @@ import com.pukkol.apkcenter.data.remote.api.apk.ApiApkService;
 import com.pukkol.apkcenter.data.remote.api.app.ApiAppService;
 import com.pukkol.apkcenter.data.remote.api.error.ApiErrorService;
 import com.pukkol.apkcenter.data.remote.api.main.ApiMainService;
-import com.pukkol.apkcenter.data.remote.api.search.ApiRequestService;
+import com.pukkol.apkcenter.data.remote.api.search.ApiAboutUsService;
+import com.pukkol.apkcenter.data.remote.api.www.ApiApkComboService;
+import com.pukkol.apkcenter.data.remote.api.search.ApiReportService;
 import com.pukkol.apkcenter.data.remote.api.search.ApiSearchService;
 import com.pukkol.apkcenter.util.API;
 
@@ -20,6 +22,14 @@ public class RetroClient {
         return new Retrofit.Builder()
                 .baseUrl(API.sIpAddress)
                 .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    @NonNull
+    private static Retrofit getRetrofitHtmlInstance() {
+        return new Retrofit.Builder()
+                .baseUrl(API.sIpAddress)
+                .addConverterFactory(new ToStringConverterFactory())
                 .build();
     }
 
@@ -44,8 +54,13 @@ public class RetroClient {
     }
 
     @NonNull
-    public static ApiRequestService getRequestService() {
-        return getRetrofitInstance().create(ApiRequestService.class);
+    public static ApiReportService getRequestService() {
+        return getRetrofitInstance().create(ApiReportService.class);
+    }
+
+    @NonNull
+    public static ApiAboutUsService getAboutService() {
+        return getRetrofitInstance().create(ApiAboutUsService.class);
     }
 
     @NonNull
@@ -57,5 +72,11 @@ public class RetroClient {
     public static ApiApkService getApkService() {
         return getRetrofitInstance().create(ApiApkService.class);
     }
+
+    @NonNull
+    public static ApiApkComboService getApkComboService() {
+        return getRetrofitHtmlInstance().create(ApiApkComboService.class);
+    }
+
 
 }

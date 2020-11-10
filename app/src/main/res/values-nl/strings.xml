@@ -21,7 +21,7 @@
 
 <!-- Search -->
     <string name="application_text">Applicatie Naam</string>
-    <string name="contact_text">Contact</string>
+    <string name="contact_text">Over ons</string>
     <string name="dupe_request_text">"Heeft U al eerder aangevraagd."</string>
     <string name="empty_request_text">Applicatie naam is leeg.</string>
     <string name="noInternet_request_text">U Internet verbinding is niet correct.</string>
@@ -29,6 +29,10 @@
     <string name="ok_request_text">Dank U Wel, We zullen er naar kijken</string>
     <string name="request_text">Aanvragen</string>
     <string name="request_hint_text">App naam / Website</string>
+    <string name="loading_outsiders">Laden buitenstaanders</string>
+    <string name="about_phone_number">Telefoon Nummer:</string>
+    <string name="about_email_address">Email Address:</string>
+    <string name="about_contact">Contact:</string>
 
 
     <!-- No Connection -->

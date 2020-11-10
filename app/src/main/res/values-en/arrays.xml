@@ -4,8 +4,8 @@
 <!-- Search -->
     <string-array name="default_menu">
         <item>Search</item>
-        <item>Application Request</item>
-        <item>Contact</item>
+        <item>Report / Request</item>
+        <item>About us</item>
     </string-array>
 
 </resources>

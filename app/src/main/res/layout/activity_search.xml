@@ -10,6 +10,8 @@
     <include
         android:id="@+id/include"
         layout="@layout/layout_bar_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="25dp" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -21,7 +23,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/include"
-        android:visibility="gone"
         />
 
     <include
@@ -39,4 +40,15 @@
         layout="@layout/layout_error"
         android:visibility="gone"
         />
+
+    <include
+        android:id="@+id/layout_AboutUs"
+        layout="@layout/layout_about"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include"
+        android:visibility="gone"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

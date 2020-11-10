@@ -7,9 +7,9 @@ import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
-import com.pukkol.apkcenter.data.local.sql.DbOpenHelper;
+import com.pukkol.apkcenter.data.local.sql.DatabaseHelper;
 import com.pukkol.apkcenter.data.model.application.AppModel;
-import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
+import com.pukkol.apkcenter.data.model.AppSmallModel;
 import com.pukkol.apkcenter.data.remote.api.RetroClient;
 import com.pukkol.apkcenter.data.remote.api.app.ApiAppService;
 import com.pukkol.apkcenter.error.ExceptionCallback.onExceptionListener;
@@ -40,17 +40,19 @@ public class DbSearchHelper implements Thread.UncaughtExceptionHandler {
     private static final int iStorageLimit = DbSearchProfile.Limit.STORAGE_INDEX;
     private static final int iRecommendedLimit = DbSearchProfile.Limit.RECOMMENDED_INDEX;
 
-    private final DbOpenHelper mDb;
+    private final DatabaseHelper mDb;
     private final onExceptionListener mCallback;
 
     public DbSearchHelper(Context context, onExceptionListener exceptionCallback) {
-        mDb = new DbOpenHelper(context);
+        mDb = DatabaseHelper.getInstance(context);
         mCallback = exceptionCallback;
         onUpdate();
     }
 
     public void close() {
-        mDb.close();
+        if(mDb != null) {
+            mDb.close();
+        }
     }
 
     // db related only

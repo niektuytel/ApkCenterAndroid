@@ -5,8 +5,8 @@
 <!-- Search -->
     <string-array name="default_menu">
         <item>Zoeken</item>
-        <item>Applicatie Aanvraag</item>
-        <item>Contact</item>
+        <item>Raporteer / Aanvragen</item>
+        <item>Over ons</item>
     </string-array>
 
 </resources>

@@ -4,7 +4,7 @@ import android.content.ContentValues;
 
 import androidx.annotation.NonNull;
 
-import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
+import com.pukkol.apkcenter.data.model.AppSmallModel;
 
 public class DbSearchProfile {
 

@@ -15,14 +15,14 @@ import com.pukkol.apkcenter.BuildConfig;
 import com.pukkol.apkcenter.R;
 import com.pukkol.apkcenter.data.local.sql.installed.DbInstalledHelper;
 import com.pukkol.apkcenter.data.local.sql.search.DbSearchHelper;
-import com.pukkol.apkcenter.data.model.InstalledModel;
+import com.pukkol.apkcenter.data.model.local.InstalledModel;
 import com.pukkol.apkcenter.data.model.application.AppModel;
-import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
+import com.pukkol.apkcenter.data.model.AppSmallModel;
 import com.pukkol.apkcenter.data.remote.api.apk.ApiApk;
 import com.pukkol.apkcenter.data.remote.api.app.ApiApp;
 import com.pukkol.apkcenter.error.ErrorHandler;
 import com.pukkol.apkcenter.error.ExceptionCallback;
-import com.pukkol.apkcenter.ui.about.AboutActivity;
+import com.pukkol.apkcenter.ui.app.about.AboutActivity;
 import com.pukkol.apkcenter.util.API;
 import com.pukkol.apkcenter.util.Value;
 
@@ -62,11 +62,6 @@ public class AppPresenter
 
         onReload();
     }
-
-//    public void onCloseDataBases() {
-//        mDbSearch.close();
-//        mDbInstalled.close();
-//    }
 
     public void onReload() {
         mApi.getApp(mTitle);

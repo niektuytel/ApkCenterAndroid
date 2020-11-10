@@ -1,11 +1,11 @@
 package com.pukkol.apkcenter.data.remote.api.main;
 
-import android.util.Log;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
-import com.pukkol.apkcenter.data.model.Categorymodel;
-import com.pukkol.apkcenter.data.model.remote.AppSmallModel;
+import com.pukkol.apkcenter.data.model.AppSmallModel;
+import com.pukkol.apkcenter.data.model.local.Categorymodel;
 import com.pukkol.apkcenter.data.remote.api.RetroClient;
 import com.pukkol.apkcenter.error.ExceptionCallback;
 import com.pukkol.apkcenter.ui.main.MainActivity;
@@ -47,27 +47,29 @@ public class ApiMain
 
     public void getCategoryNames() {
         if(mRetroApi == null){
-            mCallback.onCategoriesResponse(500, new ArrayList<>());
+            mCallback.onResponseCategories(500, new ArrayList<>());
             return;
         }
 
-        mRetroApi.categoryNames(COUNTRY).enqueue(new Callback<Map<String, String>>() {
+        String country = Uri.encode(COUNTRY);
+
+        mRetroApi.categoryNames(country).enqueue(new Callback<Map<String, String>>() {
             @Override
             public void onResponse(@NonNull Call<Map<String, String>> call, @NonNull Response<Map<String, String>> response) {
                 ArrayList<Categorymodel> categories = mapToModels(response.body());
-                mCallback.onCategoriesResponse(response.code(), categories);
+                mCallback.onResponseCategories(response.code(), categories);
             }
 
             @Override
             public void onFailure(@NonNull Call<Map<String, String>> call, @NonNull Throwable t) {
-                mCallback.onCategoriesResponse(404, new ArrayList<>());
+                mCallback.onResponseCategories(404, new ArrayList<>());
             }
         });
     }
 
     public void getCategoryApps(final String categoryName, int startIndex, int endIndex) {
         if(mAllApps == null || mRetroApi == null || categoryName.equals("")){
-            mCallback.onAppsResponse(500, new ArrayList<>(), categoryName);
+            mCallback.onResponseApplications(500, new ArrayList<>(), categoryName);
             return;
         }
 
@@ -82,13 +84,15 @@ public class ApiMain
             if(appsSize >= endIndex || mEndLoading.containsKey(categoryName)){
                 assert apps != null;
                 apps = new ArrayList<>(apps.subList(startIndex, endIndex));
-                mCallback.onAppsResponse(200, apps, categoryName);
+                mCallback.onResponseApplications(200, apps, categoryName);
                 return;
             }
 
         }
 
-        mRetroApi.categoryApps(categoryName).enqueue(new Callback<List<AppSmallModel>>() {
+        String category = Uri.encode(categoryName);
+
+        mRetroApi.categoryApps(category).enqueue(new Callback<List<AppSmallModel>>() {
             @Override
             public void onResponse(@NonNull Call<List<AppSmallModel>> call, @NonNull Response<List<AppSmallModel>> response) {
                 List<AppSmallModel> apps = new ArrayList<>();
@@ -103,7 +107,7 @@ public class ApiMain
                 }
 
                 mAllApps.put(categoryName, apps);
-                mCallback.onAppsResponse(response.code(), apps, categoryName);
+                mCallback.onResponseApplications(response.code(), apps, categoryName);
             }
 
             @Override
@@ -113,7 +117,7 @@ public class ApiMain
                     apps.addAll(0, Objects.requireNonNull(mAllApps.get(categoryName)));
                 }
 
-                mCallback.onAppsResponse(404, apps, categoryName);
+                mCallback.onResponseApplications(404, apps, categoryName);
             }
         });
 
@@ -148,12 +152,12 @@ public class ApiMain
         indexBegin = Math.max(0,indexBegin);
         indexEnd = Math.max(indexBegin + 1, indexEnd);
 
-        Log.i(TAG, "start index: " + indexBegin + "\t|\tending index: " + indexEnd);
+        // Log.i(TAG, "start index: " + indexBegin + "\t|\tending index: " + indexEnd);
     }
 
 
     public interface onDataResponseListener extends ExceptionCallback.onExceptionListener{
-        void onCategoriesResponse(int responseCode, ArrayList<Categorymodel> categories);
-        void onAppsResponse(int responseCode, List<AppSmallModel> applications, String categoryName);
+        void onResponseCategories(int responseCode, ArrayList<Categorymodel> categories);
+        void onResponseApplications(int responseCode, List<AppSmallModel> applications, String categoryName);
     }
 }

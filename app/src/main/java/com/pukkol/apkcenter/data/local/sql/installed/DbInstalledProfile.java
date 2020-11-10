@@ -4,7 +4,7 @@ import android.content.ContentValues;
 
 import androidx.annotation.NonNull;
 
-import com.pukkol.apkcenter.data.model.InstalledModel;
+import com.pukkol.apkcenter.data.model.local.InstalledModel;
 
 public class DbInstalledProfile {
 

@@ -33,13 +33,19 @@
 
 <!-- Search -->
     <string name="application_text">Application Name</string>
-    <string name="contact_text">Contact</string>
+    <string name="contact_text">About us</string>
     <string name="dupe_request_text">"Already Requested."</string>
     <string name="empty_request_text">"Failed, application name is empty."</string>
     <string name="noInternet_request_text">You do not have a internet connection.</string>
     <string name="already_request_text">Request already exists, We added the one from You to it.</string>
     <string name="ok_request_text">Thanks, We will look at it.</string>
     <string name="request_text">Request</string>
+    <string name="loading_outsiders">loading outsiders</string>
+    <string name="about_phone_number">Phone Number:</string>
+    <string name="about_email_address">Email Address:</string>
+    <string name="about_website" translatable="false">Website:</string>
+    <string name="about_empty" translatable="false">......</string>
+    <string name="about_contact">Contact:</string>
 
 <!-- No Connection -->
     <string name="button_retry">Retry</string>
@@ -49,8 +55,5 @@
 <!-- Error -->
     <string name="error_title_text">Whoops i Failed</string>
     <string name="error_content_text">Mechanic is coming :)</string>
-    <string name="todo">TODO</string>
-    <string name="http_dummy_com">http://dummy.com</string>
-    <string name="title_application">Title application</string>
 
 </resources>
