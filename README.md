@@ -28,6 +28,14 @@
 </p>
 
 # Programmers Extra info
+this application is sending all his data to a api: https://github.com/niektuytel/ApkCenterApi  
+
+- clone repository build and run it
+- when get up and running allow all permissions of application in the settings.
+- allow `download unknown apps` in the application settings.
+- ready for use
+
+(programmer working on)
 *todos:
 - [Main Activity, Section Activity]
     need to load more data based on scroll position (small apps)
