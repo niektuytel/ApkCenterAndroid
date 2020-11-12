@@ -4,24 +4,23 @@
 - display website of given application/website name
 
 
-# Main Content of Application (most popular apps)
+# display applications
 <p align="center">
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Main_Screenshot_1605019869.png" alt="Your image title" width="250"/>
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Main_Screenshot_1605019874.png" alt="Your image title" width="250"/>
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Main_Screenshot_1605019880.png" alt="Your image title" width="250"/>
 </p>
 
-# search/request/report application to admin
+# search/request/report applications to admin
 <p align="center">
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Search_Screenshot_1604961843.png" alt="Your image title" width="250"/>
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Search_Screenshot_1604961870.png" alt="Your image title" width="250"/>
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Search_Screenshot_1604961886.png" alt="Your image title" width="250"/>
 </p>
 
-# Application Content display app for downloading + website that is connected to it
+# download application
 <p align="center">
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/App_Screenshot_1605019940.png" alt="Your image title" width="250"/>
-<img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/App_Screenshot_1605019950.png" alt="Your image title" width="250"/>
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/App_Screenshot_1605019958.png" alt="Your image title" width="250"/>
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/App_Screenshot_1605019974.png" alt="Your image title" width="250"/>
 </p>
