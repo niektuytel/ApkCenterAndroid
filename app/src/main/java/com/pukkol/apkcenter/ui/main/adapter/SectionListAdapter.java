@@ -12,32 +12,46 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pukkol.apkcenter.R;
 import com.pukkol.apkcenter.data.model.AppSmallModel;
 import com.pukkol.apkcenter.data.model.application.AppSmallSectionModel;
+import com.pukkol.apkcenter.util.DeviceUtil;
 
 import java.util.List;
 
-public class SectionListAdapter extends RecyclerView.Adapter<SectionAdapter>{
+public class SectionListAdapter extends RecyclerView.Adapter<SectionAdapter>
+        implements
+        Thread.UncaughtExceptionHandler {
+    public static final Integer MAX_ROW_INDEX = 4;
 
     private final Activity mActivity;
     private final SectionAdapter.onActionListener mCallback;
 
     private List<AppSmallSectionModel> mSections;
+    private int mWidthSmallModel;
+    private int mWidthMediumModel;
 
     public SectionListAdapter(Activity activity, SectionAdapter.onActionListener callback) {
         mActivity = activity;
         mCallback = callback;
+
+        // set sizes
+        int deviceWidth = DeviceUtil.displaySize(mActivity.getWindow()).x;
+        int spacing = (int) DeviceUtil.pxFromDp(mActivity, 2);
+        double rowIndex = (double) (SectionListAdapter.MAX_ROW_INDEX);
+
+        mWidthSmallModel = (int) Math.floor((double) (deviceWidth) / (rowIndex + 1.75)) - spacing;
+        mWidthMediumModel = (int) Math.floor((double) (deviceWidth) / (rowIndex + 0.75)) - spacing;
     }
 
     @NonNull
     @Override
     public SectionAdapter onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        @SuppressLint("InflateParams") View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_section, null);
+        @SuppressLint("InflateParams") View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_section, parent, false);
 
-        return new SectionAdapter(mActivity, view, mCallback);
+        return new SectionAdapter(mActivity, view, mWidthSmallModel, mWidthMediumModel, mCallback);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SectionAdapter holder, int position) {
-        holder.onCreate(mSections.get(position));
+        new Thread(() -> holder.onCreate(mSections.get(position))).start();
     }
 
     @Override
@@ -83,11 +97,15 @@ public class SectionListAdapter extends RecyclerView.Adapter<SectionAdapter>{
                     models.set(j, model);
                 }
             }
-            if(j < models.size()) models = models.subList(0, j);
+            if (j < models.size()) models = models.subList(0, j);
             AppSmallSectionModel sectionModel = new AppSmallSectionModel(sections.get(i).getTitle(), models);
             mSections.set(i, sectionModel);
         }
 
     }
 
+    @Override
+    public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
+        mCallback.onException(throwable);
+    }
 }

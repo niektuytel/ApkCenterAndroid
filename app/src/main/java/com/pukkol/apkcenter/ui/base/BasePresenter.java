@@ -20,13 +20,15 @@ public class BasePresenter
     public BasePresenter(Context context, BaseMvpView mvpView) {
         mMvpView = mvpView;
         mContext = context;
+
+        onReloadConnection();
     }
 
     public void onReloadConnection() {
         if(mMvpView == null) return;
 
         if(API.isNetworkAvailable(mContext)) {
-            mMvpView.showActivityLayout();
+            mMvpView.showContentLayout();
         } else {
             mMvpView.showErrorInternet();
         }

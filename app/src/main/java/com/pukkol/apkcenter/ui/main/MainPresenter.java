@@ -29,7 +29,6 @@ public class MainPresenter
         ExceptionCallback.onExceptionListener,
         Thread.UncaughtExceptionHandler
 {
-    private static final Integer APPS_ROW_INDEX = 4;
 
     private final Activity mActivity;
     private final MainMvpView mView;
@@ -78,18 +77,18 @@ public class MainPresenter
         ArrayList<AppSmallSectionModel> sections = new ArrayList<>();
 
         if(sectionTitle != null) {
+            if (applications.size() == 0) return;
             AppSmallSectionModel section = new AppSmallSectionModel(sectionTitle, applications);
             sections.add(section);
         }
         else if(category != null) {
             // add app sections
             ArrayList<AppSmallModel> rowApps = new ArrayList<>();
-            for(int i=0; i < applications.size(); i++)
-            {
+            for (int i = 0; i < applications.size(); i++) {
                 rowApps.add(applications.get(i));
 
-                if(i > 0 && i % APPS_ROW_INDEX == 0 || i == (applications.size() - 1))
-                {
+                int maxIndex = SectionListAdapter.MAX_ROW_INDEX - 1;
+                if (i > 0 && i % maxIndex == 0 || i == (applications.size() - 1)) {
                     AppSmallSectionModel section = new AppSmallSectionModel(rowApps);
                     sections.add(section);
                     rowApps = new ArrayList<>();
@@ -126,22 +125,21 @@ public class MainPresenter
     }
 
 
-    public void onStart() {
-        mRecommended = mDbSearch.getRecommended();
-        onReload(true);
-    }
+//    public void onStart() {
+//        mRecommended = mDbSearch.getRecommended();
+//        onReload(true);
+//    }
 
     public void onReload(boolean refreshData) {
-        if(mView == null) return;
+        if (mView == null) return;
 
-        if(API.isNetworkAvailable(mActivity)) {
+        if (API.isNetworkAvailable(mActivity)) {
             mApiMain.getCategoryNames();
             onTabSelected(0, refreshData);
         } else {
             mView.showErrorInternet();
         }
     }
-
 
     public void onTabSelected(int position, boolean refreshData) {
         if(mView == null || (mLatestTabIndex == position && !refreshData)) return;
@@ -183,7 +181,6 @@ public class MainPresenter
         new ErrorHandler(mActivity, throwable);
         mView.showError();
     }
-
 
     private void loadDefaultData() {
         mRecommended = mDbSearch.getRecommended();

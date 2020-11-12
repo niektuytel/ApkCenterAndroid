@@ -28,11 +28,15 @@ public class SectionAdapter extends RecyclerView.ViewHolder
     private ModelListAdapter mModelsAdapter;
 
     private String mTitle;
+    private int mWidthSmall;
+    private int mWidthMedium;
 
 
-    public SectionAdapter(Activity activity, View itemView, onActionListener callback) {
+    public SectionAdapter(Activity activity, View itemView, int smallWidth, int mediumWidth, onActionListener callback) {
         super(itemView);
         mActivity = activity;
+        mWidthSmall = smallWidth;
+        mWidthMedium = mediumWidth;
         mCallback = callback;
 
         mSectionHeader = itemView.findViewById(R.id.layout_sectionTitle);
@@ -42,27 +46,34 @@ public class SectionAdapter extends RecyclerView.ViewHolder
         mLayoutModels.setLayoutManager(
                 new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false)
         );
-
     }
 
-    public void onCreate(AppSmallSectionModel section) {
+    public void onCreate(@NonNull AppSmallSectionModel section) {
         mTitle = section.getTitle();
         mTextSectionTitle.setText(mTitle);
 
-        int modelResourceId = R.layout.element_app_medium;
-        if(section.getTitle() != null) {
-            modelResourceId = R.layout.element_app_small;
-            mSectionHeader.setVisibility(View.VISIBLE);
-            mSectionHeader.setOnClickListener(this);
-        }
-
         // create
-        if(mModelsAdapter == null) {
-            mModelsAdapter = new ModelListAdapter(mActivity, section.getModels(), modelResourceId, mCallback);
-            mActivity.runOnUiThread( () -> mLayoutModels.setAdapter(mModelsAdapter) );
+        if (mModelsAdapter == null) {
+            boolean isSmallModel = false;
+            if (section.getTitle() != null) {
+                isSmallModel = true;
+
+                mActivity.runOnUiThread(
+                        () -> {
+                            mSectionHeader.setVisibility(View.VISIBLE);
+                            mSectionHeader.setOnClickListener(this);
+                        }
+                );
+            }
+
+            int size = isSmallModel ? mWidthSmall : mWidthMedium;
+
+            mModelsAdapter = new ModelListAdapter(mActivity, section.getModels(), size, size, mCallback);
+            mActivity.runOnUiThread(() -> mLayoutModels.setAdapter(mModelsAdapter));
         } else {
             mModelsAdapter.newData(section.getModels());
         }
+
     }
 
     public void onUpdate(final ModelListAdapter adapter) {

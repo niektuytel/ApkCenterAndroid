@@ -9,14 +9,14 @@ import androidx.annotation.NonNull;
 import com.pukkol.apkcenter.R;
 import com.pukkol.apkcenter.data.local.sql.report.DbReportHelper;
 import com.pukkol.apkcenter.data.local.sql.search.DbSearchHelper;
-import com.pukkol.apkcenter.data.model.remote.AboutUsModel;
-import com.pukkol.apkcenter.data.model.remote.RequestModel;
 import com.pukkol.apkcenter.data.model.SearchModel;
 import com.pukkol.apkcenter.data.model.StatusModel;
+import com.pukkol.apkcenter.data.model.remote.AboutUsModel;
+import com.pukkol.apkcenter.data.model.remote.RequestModel;
 import com.pukkol.apkcenter.data.remote.api.search.ApiAboutUs;
-import com.pukkol.apkcenter.data.remote.api.search.SearchApiStructure;
 import com.pukkol.apkcenter.data.remote.api.search.ApiReport;
 import com.pukkol.apkcenter.data.remote.api.search.ApiSearch;
+import com.pukkol.apkcenter.data.remote.api.search.SearchApiStructure;
 import com.pukkol.apkcenter.data.remote.api.www.ApiApkCombo;
 import com.pukkol.apkcenter.error.ErrorHandler;
 import com.pukkol.apkcenter.error.ExceptionCallback;
@@ -56,7 +56,7 @@ public class SearchPresenter <Model>
         mSearchView = searchView;
 
         // load data
-        if(mActivity.getString(resHintId).equals(mActivity.getString(R.string.search_hint))) {
+        if (mActivity.getString(resHintId).equals(mActivity.getString(R.string.search_hint))) {
             mAdapter = new ListItemsAdapter<>(mActivity, this);
         } else {
             mApiApkCombo = new ApiApkCombo(this);
@@ -65,39 +65,57 @@ public class SearchPresenter <Model>
             mAdapter = new ListItemsAdapter<>(mActivity, mDbReport, this);
         }
 
-        new Thread( this::loadDefaultData ).start();
+        onReload();
+    }
+
+    public void onReload() {
+        if (API.isNetworkAvailable(mContext)) {
+            new Thread(this::loadDefaultData).start();
+        } else {
+            mSearchView.showErrorInternet();
+        }
     }
 
     public void onSearch(@NonNull String input) {
         mLatestInput = input;
-        if(input.equals("") && API.isNetworkAvailable(mContext)) {
+        if (input.equals("") && API.isNetworkAvailable(mContext)) {
             mAdapter.updateData((ArrayList<Model>) (mDefaultModels));
-            mSearchView.showAdapter(mAdapter, mSearchHint);
-        }
-        else if (!API.isNetworkAvailable(mContext)) {
+            mSearchView.showAdapter(mAdapter);
+        } else if (!API.isNetworkAvailable(mContext)) {
             mSearchView.showErrorInternet();
-        }
-        else {
-            new Thread( () -> mApi.onSearch(input)).start();
+        } else {
+            new Thread(() -> mApi.onSearch(input)).start();
 
             // search apps from world wide web
-            if(mApiApkCombo != null) {
-                new Thread( () -> mApiApkCombo.onSearch(input)).start();
+            if (mApiApkCombo != null) {
+                new Thread(() -> mApiApkCombo.onSearch(input)).start();
             }
         }
     }
 
-    public void onReportAdd(RequestModel model){
-        mApi.onReportAdd(model);
+    public void onReportAdd(RequestModel model) {
+        if (API.isNetworkAvailable(mContext)) {
+            mApi.onReportAdd(model);
+        } else {
+            mSearchView.showErrorInternet();
+        }
     }
 
-    public void onReportRemove(RequestModel model){
-        mApi.onReportRemove(model);
+    public void onReportRemove(RequestModel model) {
+        if (API.isNetworkAvailable(mContext)) {
+            mApi.onReportRemove(model);
+        } else {
+            mSearchView.showErrorInternet();
+        }
     }
 
     public void onAboutUs() {
-        ApiAboutUs apiAboutUs = new ApiAboutUs(this);
-        apiAboutUs.getAboutUs();
+        if (API.isNetworkAvailable(mContext)) {
+            ApiAboutUs apiAboutUs = new ApiAboutUs(this);
+            apiAboutUs.getAboutUs();
+        } else {
+            mSearchView.showErrorInternet();
+        }
     }
 
 
@@ -107,7 +125,7 @@ public class SearchPresenter <Model>
             mSearchView.showError();
         } else {
             mAdapter.updateData((ArrayList<Model>) applications);
-            mSearchView.showAdapter(mAdapter, mSearchHint);
+            mSearchView.showAdapter(mAdapter);
         }
     }
 
@@ -122,7 +140,7 @@ public class SearchPresenter <Model>
 
         if(mLatestInput.equals(onInput)) {
             mAdapter.addData((ArrayList<Model>) applications);
-            mSearchView.showAdapter(mAdapter, mSearchHint);
+            mSearchView.showAdapter(mAdapter);
         }
     }
 

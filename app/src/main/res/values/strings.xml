@@ -22,16 +22,18 @@
     <string name="txt_limit">limit</string>
     <string name="txt_limit_default" translatable="false">0</string>
     <string name="txt_limit_times_a_day">x usable a day</string>
+    <string name="app_downloads" translatable="false">Downloads</string>
+    <string name="app_pegi" translatable="false">Pegi</string>
 
 
-<!-- Home -->
+    <!-- Home -->
     <string name="search_hint">Search for apps &amp; websites</string>
     <string name="recommended_text">Recommended for you</string>
     <string name="home">Home</string>
     <string name="categories">Categories</string>
     <string name="request_hint_text">App name / Website</string>
 
-<!-- Search -->
+    <!-- Search -->
     <string name="application_text">Application Name</string>
     <string name="contact_text">About us</string>
     <string name="dupe_request_text">"Already Requested."</string>
@@ -47,13 +49,25 @@
     <string name="about_empty" translatable="false">......</string>
     <string name="about_contact">Contact:</string>
 
-<!-- No Connection -->
+    <!-- No Connection -->
     <string name="button_retry">Retry</string>
     <string name="connection_content_txt">We will come back to you, when the connection is back</string>
     <string name="connection_title_txt">You\'re offline</string>
 
-<!-- Error -->
+    <!-- Error -->
     <string name="error_title_text">Whoops i Failed</string>
     <string name="error_content_text">Mechanic is coming :)</string>
+
+
+    <!-- Rest -->
+    <string name="app_times" translatable="false">times</string>
+    <string name="app_limit_opening" translatable="false">limit opening</string>
+    <string name="disc_app_images" translatable="false">display image, will been used in recyclerview</string>
+    <string name="disc_app_card" translatable="false">display card image for application, in a recyclerview</string>
+    <string name="disc_app_logo" translatable="false">display logo of application</string>
+    <string name="disc_app_star" translatable="false">display star for reviews</string>
+    <string name="desc_app_pegi" translatable="false">display pegi image</string>
+    <string name="display_lock_image_on_annotation" translatable="false">display lock image on annotation</string>
+    <string name="desc_arrow_back" translatable="false">arrow back to previous activity</string>
 
 </resources>

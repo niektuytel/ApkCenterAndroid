@@ -19,6 +19,7 @@ public class DbInstalledHelper implements Thread.UncaughtExceptionHandler {
     private static String sTableName = DbInstalledProfile.Table.TABLE_NAME;
     private static String sColumnTitle = DbInstalledProfile.Table.COLUMN_TITLE;
     private static String sColumnFilename = DbInstalledProfile.Table.COLUMN_FILENAME;
+    private static String sColumnSuccess = DbInstalledProfile.Table.COLUMN_SUCCESS;
 
     private final DatabaseHelper mDb;
     private final onExceptionListener mCallback;
@@ -29,31 +30,52 @@ public class DbInstalledHelper implements Thread.UncaughtExceptionHandler {
     }
 
     public void close() {
-        if(mDb != null) {
+        if (mDb != null) {
             mDb.close();
         }
     }
 
+    /**
+     * add title of application that we try to install apk for
+     **/
     public boolean addApplication(InstalledModel model) {
         ContentValues cv = DbInstalledProfile.toContentValues(model);
         return mDb.insert(sTableName, cv);
     }
 
-    public boolean hasAppTitle(String title) {
-        return mDb.find(sTableName, sColumnTitle, title);
+    /**
+     * check if title application is successful installed on device
+     **/
+    public boolean installSucceeded(String title) {
+        return mDb.updateOnName(sTableName, sColumnSuccess, true, sColumnTitle, title);
     }
 
-    public List<String> getInstalledFileNames() {
+    /**
+     * is application installed successfully on device
+     **/
+    public boolean isInstalled(String title) {
+        return mDb.getValueOnName(sTableName, sColumnTitle, title, sColumnSuccess, false);
+    }
+
+
+    /**
+     * get all installed filenames from sql-lite
+     **/
+    private List<String> getInstalledFileNames() {
         return mDb.getValuesOnName(sTableName, sColumnFilename);
     }
 
+
+    /**
+     * clean the storage if he found one of the installed files, than he will delete the file from downloaded
+     **/
     public void cleanSdCard() {
         File path = Environment.getExternalStorageDirectory();
-        for(String filename : getInstalledFileNames()) {
+        for (String filename : getInstalledFileNames()) {
             File file = new File(path, filename);
 
             // delete file
-            if(file.exists()) {
+            if (file.exists()) {
                 boolean success = file.delete();
                 Log.i(TAG, "deleting file :" + file.getAbsolutePath() + " succeeded:" + success);
             }

@@ -14,7 +14,7 @@
     tools:targetApi="p">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tBar_app"
+        android:id="@+id/layout_toolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorBackground"
@@ -26,14 +26,14 @@
             android:layout_height="wrap_content" >
 
             <ImageView
-                android:id="@+id/iView_barHome"
+                android:id="@+id/image_bar_arrow_back"
                 android:layout_width="45dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:padding="8dp"
                 android:rotation="180"
                 app:srcCompat="@drawable/arrow_right_gray"
-                />
+                android:contentDescription="@string/desc_arrow_back" />
 
             <TextView
                 android:id="@+id/txt_barTitle"
@@ -51,26 +51,16 @@
                 android:id="@+id/view_0"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                />
-
-            <ImageView
-                android:id="@+id/iView_barPrevious"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:rotation="180"
-                android:padding="10dp"
-                app:srcCompat="@drawable/icon_arrow_green"
-                android:visibility="gone"/>
-
-            <ImageView
-                android:id="@+id/iView_barReload"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:padding="15dp"
-                app:srcCompat="@drawable/icon_refresh"
-                android:visibility="gone"/>
+                android:layout_weight="1" />
 
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#ECECEC"
+        app:layout_constraintTop_toBottomOf="@+id/tBar_app"
+        tools:layout_editor_absoluteX="0dp" />
 </com.google.android.material.appbar.AppBarLayout>

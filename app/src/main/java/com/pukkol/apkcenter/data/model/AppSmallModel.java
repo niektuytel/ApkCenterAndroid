@@ -1,5 +1,7 @@
 package com.pukkol.apkcenter.data.model;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 public class AppSmallModel {
@@ -20,6 +22,7 @@ public class AppSmallModel {
 
     private long latestUpdate;
 
+
     public AppSmallModel(String title, String icon, String websiteUrl, double star, int used, String limit, long latestUpdate) {
         this.title = title;
         this.icon = icon;
@@ -30,6 +33,7 @@ public class AppSmallModel {
         this.latestUpdate = latestUpdate;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "AppSmallModel{" +

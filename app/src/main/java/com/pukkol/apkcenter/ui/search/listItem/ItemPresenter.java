@@ -5,20 +5,24 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 
 import com.pukkol.apkcenter.R;
-import com.pukkol.apkcenter.data.model.remote.RequestModel;
 import com.pukkol.apkcenter.data.model.SearchModel;
+import com.pukkol.apkcenter.data.model.remote.RequestModel;
 
-public class ItemPresenter {
+public class ItemPresenter
+        implements
+        Thread.UncaughtExceptionHandler {
 
     private ItemMvpView mElementView;
+    private ItemAdapter.onListItemClickListener mCallback;
     private int mIconResID;
 
-    public ItemPresenter(ItemMvpView itemMvpView, @NonNull RequestModel model) {
+    public ItemPresenter(ItemMvpView itemMvpView, @NonNull RequestModel model, ItemAdapter.onListItemClickListener callback) {
         mElementView = itemMvpView;
+        mCallback = callback;
         mIconResID = R.drawable.ic_persons;
         String url = "";
 
-        if(model.getWebsiteUrls().length > 0) {
+        if (model.getWebsiteUrls().length > 0) {
             url = model.getWebsiteUrls()[0];
         }
 
@@ -53,7 +57,7 @@ public class ItemPresenter {
     }
 
     private void displayWebsite(String websiteUrl) {
-        if(websiteUrl == null) websiteUrl = "";
+        if (websiteUrl == null) websiteUrl = "";
         mElementView.showUrl(websiteUrl);
     }
 
@@ -62,4 +66,8 @@ public class ItemPresenter {
         mElementView.showReports(currentCount);
     }
 
+    @Override
+    public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
+        mCallback.onException(throwable);
+    }
 }

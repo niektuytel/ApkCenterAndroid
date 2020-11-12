@@ -30,7 +30,7 @@ public class ApiApp
 
     public void getApp(String appTitle) {
         if(mApi == null){
-            mCallback.onAppResponse(500, null);
+            mCallback.onResponseApp(500, null);
             return;
         }
 
@@ -39,12 +39,12 @@ public class ApiApp
         mApi.app(country, appTitle).enqueue(new Callback<AppModel>() {
             @Override
             public void onResponse(@NonNull Call<AppModel> call, @NonNull Response<AppModel> response) {
-                mCallback.onAppResponse(response.code(), response.body());
+                mCallback.onResponseApp(response.code(), response.body());
             }
 
             @Override
             public void onFailure(@NonNull Call<AppModel> call, @NonNull Throwable t) {
-                mCallback.onAppResponse(404, null);
+                mCallback.onResponseApp(404, null);
             }
         });
     }
@@ -55,6 +55,6 @@ public class ApiApp
     }
 
     public interface onDataResponseListener extends ExceptionCallback.onExceptionListener {
-        void onAppResponse(int responseCode, AppModel application);
+        void onResponseApp(int responseCode, AppModel application);
     }
 }

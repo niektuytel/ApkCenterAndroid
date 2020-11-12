@@ -1,70 +1,74 @@
 package com.pukkol.apkcenter.ui.app;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Environment;
-import android.util.Log;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
 
-import com.pukkol.apkcenter.BuildConfig;
 import com.pukkol.apkcenter.R;
+import com.pukkol.apkcenter.data.local.service.InstallApkService;
 import com.pukkol.apkcenter.data.local.sql.installed.DbInstalledHelper;
 import com.pukkol.apkcenter.data.local.sql.search.DbSearchHelper;
-import com.pukkol.apkcenter.data.model.local.InstalledModel;
-import com.pukkol.apkcenter.data.model.application.AppModel;
 import com.pukkol.apkcenter.data.model.AppSmallModel;
-import com.pukkol.apkcenter.data.remote.api.apk.ApiApk;
+import com.pukkol.apkcenter.data.model.application.AppModel;
 import com.pukkol.apkcenter.data.remote.api.app.ApiApp;
 import com.pukkol.apkcenter.error.ErrorHandler;
 import com.pukkol.apkcenter.error.ExceptionCallback;
 import com.pukkol.apkcenter.ui.app.about.AboutActivity;
 import com.pukkol.apkcenter.util.API;
-import com.pukkol.apkcenter.util.Value;
-
-import java.io.File;
 
 public class AppPresenter
-    implements
-        ApiApk.onDataResponseListener,
+        implements
         ApiApp.onDataResponseListener,
+        ServiceConnection,
+        InstallApkService.onActionCallBack,
         ExceptionCallback.onExceptionListener,
-        Thread.UncaughtExceptionHandler
-
-{
-    private static final String TAG = AppActivity.class.getSimpleName();
-    private static final Integer LIMIT_MINUTES = 15;
-
+        Thread.UncaughtExceptionHandler {
     private final DbSearchHelper mDbSearch;
     private final DbInstalledHelper mDbInstalled;
     private final Activity mActivity;
     private final Context mContext;
-    private final AppMvpViewMy mAppView;
+    private final AppMvpView mAppView;
     private AppModel mAppModel;
     private ApiApp mApi;
+    private final Intent mBindIntent;
+    private InstallApkService mService;
 
-    private String mTitle;
-    private boolean mIsLimitPaid = false;
+    private boolean isInstallable = true;
+    private boolean mServiceHaveError = false;
 
-    public AppPresenter(Activity activity, AppMvpViewMy appView) {
+    public AppPresenter(Activity activity, AppMvpView appView) {
         mContext = mActivity = activity;
         mAppView = appView;
+
         mDbSearch = new DbSearchHelper(mContext, this);
+        mBindIntent = new Intent(activity, InstallApkService.class);
         mDbInstalled = new DbInstalledHelper(mContext, this);
         mApi = new ApiApp(this);
 
-        Intent intent = mActivity.getIntent();
-        mTitle = intent.getStringExtra("title");
+        // bind service when is running
+        if (InstallApkService.isServiceRunning()) {
+            isInstallable = false;
+            mAppView.showInstall(InstallState.OCCUPIED);
+            mActivity.bindService(mBindIntent, this, Context.BIND_AUTO_CREATE);
+        }
 
-        onReload();
+        // display ui
+        Intent intent = activity.getIntent();
+        String title = intent.getStringExtra("title");
+        onReload(title);
     }
 
-    public void onReload() {
-        mApi.getApp(mTitle);
+    public void onReload(String title) {
+        if (API.isNetworkAvailable(mActivity)) {
+            mApi.getApp(title);
+        } else {
+            mAppView.showErrorInternet();
+        }
     }
 
     public void onAboutClicked() {
@@ -76,176 +80,19 @@ public class AppPresenter
     public void onAppButtonClicked(String currentState) {
         String installAppState = mContext.getString(R.string.button_install);
 
-        String appTitle = mAppModel.getTitle();
-        String apkFileName = mAppModel.getApk().getUrl();
 
         // install application
-        if(installAppState.equals(currentState)) {
-            startDownload(appTitle, apkFileName);
-            mAppView.showInstallState(201);
+        if (installAppState.equals(currentState)) {
+            String title = mAppModel.getTitle();
+            String filename = mAppModel.getApk().getUrl();
+
+            startService(title, filename);
         }
     }
 
-    public void onLimitCalled(boolean payLimit) {
-        // check
-        if(mAppModel.getLimit() == null || mAppModel.getWebsiteUrl() == null) {
-            return;
-        }
-
-        String title = mAppModel.getTitle();
-        String currentLimit = mDbSearch.getLimit(title);
-        String storedLimit = mAppModel.getLimit();
-
-        if(!mIsLimitPaid) {
-            mIsLimitPaid = payLimit;
-
-            // check
-            if(storedLimit.equals("None")){
-                mAppView.showLimit(-1, 0, true, storedLimit);
-                return;
-            } else if (!Value.isNumeric(storedLimit) || !Value.isNumeric(currentLimit)) {
-                mAppView.showLimit(-2, 0, false, storedLimit);
-                return;
-            }
-
-            int limit = Integer.parseInt(currentLimit);
-            boolean display = limit > 0;
-
-            // pay limit
-            if(payLimit && limit > 0) {
-                limit -= 1;
-
-                boolean response = mDbSearch.updateLimit(title, String.valueOf(limit));
-                String state = response ? "Succeeded" : "Failed";
-                Log.i(TAG, "Pay limit: " + state);
-            }
-
-            //display
-            {
-                int maxLimit = Integer.parseInt(storedLimit);
-
-                int g = (int)Math.round((double)200 * ((double)limit / (double) maxLimit));
-                int r = 200 - g;
-                int b = 0;
-                Log.i(TAG, "Display limit color [ R=" + r + ", G=" + g + ", B=" + b + " ]");
-
-                mAppView.showLimit(limit, Color.rgb(r, g, b), display, storedLimit);
-            }
-
-
-            // start timer for removing 1 from limit if time expired
-            if(payLimit) {
-                new Thread(this::onLimitTimer).start();
-            }
-        }
-    }
-
-    public void onLimitTimer() {
-        // check
-        if(mAppModel.getLimit() == null || mAppModel.getWebsiteUrl() == null) {
-            return;
-        }
-
-        long start = System.currentTimeMillis();
-        long tokenExpired = start + (1000 * 60 * LIMIT_MINUTES);
-
-        while(System.currentTimeMillis() < tokenExpired) {
-            try {
-                Thread.sleep(1000 * 60);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // on limit called
-        onLimitCalled(true);
-    }
-
-    @Override
-    public void onApkResponse(int responseCode) {
-        Log.i(TAG, "response code download apk: " + responseCode);
-        mAppView.showInstallState(responseCode);
-
-        String title = mAppModel.getTitle();
-        String filename = mAppModel.getApk().getUrl();
-
-        // add local storage that it is installed
-        if(responseCode == 200) {
-
-            InstalledModel model = new InstalledModel(title, filename);
-            mDbInstalled.addApplication(model);
-
-            // download apk on device
-            launchApk(filename);
-        }
-    }
-
-    @Override
-    public void onAppResponse(int responseCode, AppModel application) {
-        if(responseCode == 200) {
-            mAppModel = application;
-            boolean containsApp = (application.getApk() != null);
-            boolean containsWww = (application.getWebsiteUrl() != null);
-
-            // app
-            if(containsApp) {
-                new Thread(
-                        () -> {
-                            mAppView.showAppLayout();
-                            mAppView.showAppText(application);
-                            mAppView.showAppPegi(application.getApk().getPegi());
-                            mAppView.showAppIcon(application.getApk().getIcon());
-                            createImages(application.getApk().getImages(), containsWww);
-
-                            stateInstalled();
-                        }
-                ).start();
-            }
-
-
-            // website
-            if(containsWww) {
-                new Thread(
-                        () -> {
-                            mAppView.showWebsiteLayout();
-                            mAppView.showWebsite(application.getWebsiteUrl(), getRequiredDomain());
-                        }
-                ).start();
-            }
-
-            // store to the ai
-            updateSearch();
-            onLimitCalled(false);
-
-        } else {
-            mAppView.showError();
-        }
-    }
-
-    @Override
-    public void onException(Throwable throwable) {
-        new ErrorHandler(mContext, throwable);
-        mAppView.showError();
-    }
-
-    @Override
-    public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
-        onException(throwable);
-    }
-
-    public String getDefaultUrl() {
-        return mAppModel.getWebsiteUrl();
-    }
-
-    public boolean isLimitPaid() {
-        return mIsLimitPaid;
-    }
-
-
-    //private functions
-    private void createImages(String[] images, boolean containsWww) {
+    private void createImages(String[] images) {
         ImagesAdapter adapter = new ImagesAdapter(mActivity, images, 325);
-        mAppView.showAppImages(adapter, containsWww);
+        mAppView.showImages(adapter);
     }
 
     private void updateSearch() {
@@ -261,38 +108,111 @@ public class AppPresenter
         mDbSearch.updateSearch(model);
     }
 
-    private void launchApk(String filename) {
-        File path = Environment.getExternalStorageDirectory();
-        File installFile = new File(path, filename);
-        Uri apkUri = FileProvider.getUriForFile(mContext, BuildConfig.APPLICATION_ID + ".fileprovider", installFile);
+    private void startService(String title, String filename) {
+        if (API.isNetworkAvailable(mActivity)) {
+            if (isInstallable) {
+                isInstallable = false;
+                mBindIntent.putExtra("title", title);
+                mBindIntent.putExtra("filename", filename);
 
-        Intent intents = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-        intents.setData(apkUri);
-        intents.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        mContext.startActivity(intents);
-    }
-
-    private void startDownload(String title, String filename) {
-        if(API.isNetworkAvailable(mContext)) {
-            ApiApk mApi = new ApiApk(this);
-            mApi.downloadApk(title, filename);
+                mActivity.startService(mBindIntent);
+                mActivity.bindService(mBindIntent, this, Context.BIND_AUTO_CREATE);
+                mAppView.showInstall(InstallState.OCCUPIED);
+            }
+        } else {
+            mAppView.showErrorInternet();
         }
     }
 
-    public String getRequiredDomain() {
-        String requiredDomain = mAppModel.getWebsiteUrl().replace("https://", "");
-        requiredDomain = requiredDomain.replace("http://", "");
-        requiredDomain = requiredDomain.split("/")[0];
-        return requiredDomain;
-    }
-
-    private void stateInstalled() {
-        String title = mAppModel.getTitle();
-        boolean exist = mDbInstalled.hasAppTitle(title);
-
-        if(exist) {
-            mAppView.showInstallState(200);
+    public void onBindService() {
+        if (InstallApkService.isServiceRunning()) {
+            mAppView.showInstall(InstallState.OCCUPIED);
+            isInstallable = false;
+            mActivity.bindService(mBindIntent, this, Context.BIND_AUTO_CREATE);
+        } else {
+            isInstallable = true;
         }
     }
+
+    @Override
+    public void onResponseApp(int responseCode, AppModel application) {
+        if (responseCode == 200) {
+            mAppModel = application;
+
+            // app
+            new Thread(
+                    () -> {
+                        mAppView.showText(application);
+                        mAppView.showPegi(application.getApk().getPegi());
+                        mAppView.showIcon(application.getApk().getIcon());
+                        createImages(application.getApk().getImages());
+
+                        boolean exist = mDbInstalled.isInstalled(mAppModel.getTitle());
+                        if (exist) {
+                            mAppView.showInstall(InstallState.INSTALLED);
+                        } else {
+                            mAppView.showInstall(InstallState.INSTALLABLE);
+                        }
+                    }
+            ).start();
+
+            // store to the ai
+            updateSearch();
+
+        } else {
+            mAppView.showError();
+        }
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        InstallApkService.LocalBinder binder = (InstallApkService.LocalBinder) iBinder;
+        mService = binder.getService();
+        if (mService != null) {
+            mService.setActionCallback(this);
+        }
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName componentName) {
+        mService = null;
+    }
+
+    @Override
+    public void onServiceProgress(long total, long current) {
+        if (mServiceHaveError) return;
+
+        int percentage = (int) (((double) current / (double) total) * 100.00);
+        String txt = "busy downloading " + percentage + "%";
+        mAppView.showProgress(txt);
+    }
+
+    @Override
+    public void onServiceError(String title) {
+        mServiceHaveError = true;
+        mService = null;
+        mAppView.showInstall(InstallState.SOMETHING_WRONG);
+    }
+
+    @Override
+    public void onServiceFinished(String title) {
+        if (mAppModel.getTitle().equals(title)) {
+            mAppView.showInstall(InstallState.INSTALLED);
+        } else {
+            mAppView.showInstall(InstallState.INSTALLABLE);
+        }
+    }
+
+    @Override
+    public void onException(Throwable throwable) {
+        new ErrorHandler(mContext, throwable);
+        mAppView.showError();
+    }
+
+    @Override
+    public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
+        onException(throwable);
+    }
+
 
 }

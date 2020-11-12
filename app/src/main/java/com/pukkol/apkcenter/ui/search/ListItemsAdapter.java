@@ -11,12 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pukkol.apkcenter.R;
 import com.pukkol.apkcenter.data.local.sql.report.DbReportHelper;
+import com.pukkol.apkcenter.data.model.SearchModel;
 import com.pukkol.apkcenter.data.model.remote.RequestModel;
 import com.pukkol.apkcenter.ui.search.listItem.ItemAdapter;
 
 import java.util.ArrayList;
 
 public class ListItemsAdapter<T> extends RecyclerView.Adapter<ItemAdapter>
+        implements Thread.UncaughtExceptionHandler
 {
     private Activity mActivity;
     private ItemAdapter.onListItemClickListener mCallback;
@@ -48,7 +50,15 @@ public class ListItemsAdapter<T> extends RecyclerView.Adapter<ItemAdapter>
     @Override
     public void onBindViewHolder(@NonNull ItemAdapter holder, int position) {
         if(!holder.equals(mModels.get(position))) {
-            holder.onCreate(mModels.get(position));
+            new Thread(
+                    () -> {
+                        if (mModels.get(0) instanceof SearchModel) {
+                            holder.onCreate((SearchModel) mModels.get(position));
+                        } else if (mModels.get(0) instanceof RequestModel) {
+                            holder.onCreate((RequestModel) mModels.get(position));
+                        }
+                    }
+            ).start();
         }
     }
 
@@ -85,10 +95,14 @@ public class ListItemsAdapter<T> extends RecyclerView.Adapter<ItemAdapter>
             }
 
             // add new application
-            if(!founded) mModels.add(model);
+            if (!founded) mModels.add(model);
         }
     }
 
+    @Override
+    public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
+        mCallback.onException(throwable);
+    }
 }
 
 

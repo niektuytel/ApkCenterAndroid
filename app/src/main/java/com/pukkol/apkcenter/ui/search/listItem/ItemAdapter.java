@@ -13,15 +13,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.pukkol.apkcenter.R;
 import com.pukkol.apkcenter.data.local.sql.report.DbReportHelper;
+import com.pukkol.apkcenter.data.model.SearchModel;
 import com.pukkol.apkcenter.data.model.local.ReportModel;
 import com.pukkol.apkcenter.data.model.remote.RequestModel;
-import com.pukkol.apkcenter.data.model.SearchModel;
 import com.pukkol.apkcenter.error.ExceptionCallback;
 
 public class ItemAdapter extends RecyclerView.ViewHolder
-    implements
+        implements
         ItemMvpView,
-        Button.OnClickListener
+        Button.OnClickListener,
+        Thread.UncaughtExceptionHandler
 {
     private LinearLayout mLayoutApp;
     private LinearLayout mLayoutLoader;
@@ -38,6 +39,7 @@ public class ItemAdapter extends RecyclerView.ViewHolder
     private final onListItemClickListener mCallback;
 
     private int mCounting = 0;
+    private int mLatestCount;
     private boolean mClickedAdd = false;
     private boolean mClickedRemove = false;
     private String mIconUrl;
@@ -70,106 +72,113 @@ public class ItemAdapter extends RecyclerView.ViewHolder
         mButtonRemove.setOnClickListener(this);
     }
 
-    public <T> void onCreate(final T model) {
-        new Thread(
-                () -> {
-                    if (mDbReport == null) {
-                        new ItemPresenter(this, (SearchModel) model);
-                        return;
-                    }
+    public void onCreate(final RequestModel model) {
+        mRequestModel = model;
+        String title = mRequestModel.getTitle();
 
-                    String title;
-                    if (model instanceof SearchModel) {
-                        title = ((SearchModel) model).getTitle();
-                    } else {
-                        title = ((RequestModel) model).getTitle();
+        // display loader
+        if (title == null) {
+            mLayoutApp.setVisibility(View.GONE);
+            mLayoutLoader.setVisibility(View.VISIBLE);
+            return;
+        }
 
-                        // display loader
-                        if(title == null) {
-                            mLayoutApp.setVisibility(View.GONE);
-                            mLayoutLoader.setVisibility(View.VISIBLE);
-                            return;
-                        }
-                    }
-                    mReport = mDbReport.getReport(title);
+        mReport = mDbReport.getReport(title);
+        new ItemPresenter(this, mRequestModel, mCallback);
+    }
 
+    public void onCreate(final SearchModel model) {
+        if (mDbReport == null) {
+            new ItemPresenter(this, model);
+            return;
+        }
 
-                    if (model instanceof SearchModel) {
-                        mRequestModel = new RequestModel((SearchModel) model);
-                    } else {
-                        mRequestModel = (RequestModel) model;
-                    }
-                    new ItemPresenter(this, mRequestModel);
-                }
-        ).start();
+        mRequestModel = new RequestModel(model);
+        String title = mRequestModel.getTitle();
+
+        mReport = mDbReport.getReport(title);
+        new ItemPresenter(this, mRequestModel, mCallback);
     }
 
     @Override
     public void onClick(@NonNull View view) {
-        String title = mTextTitle.getText().toString();
-        String url = mTextWebsiteUrl != null ? mTextWebsiteUrl.getText().toString() : "";
-        SearchModel model = new SearchModel(title, url, mIconUrl);
+        new Thread(
+                () -> {
+                    String title = mTextTitle.getText().toString();
+                    String url = mTextWebsiteUrl != null ? mTextWebsiteUrl.getText().toString() : "";
+                    SearchModel model = new SearchModel(title, url, mIconUrl);
 
-        switch (view.getId()) {
-            case R.id.btn_app_add:
-                mClickedAdd = !mClickedAdd;
-                onAdd(mRequestModel);
-                break;
-            case R.id.btn_app_remove:
-                mClickedRemove = !mClickedRemove;
-                onRemove(mRequestModel);
-                break;
-            case R.id.layout_searchItem:
-                mCallback.onItemClicked(model);
-                break;
-        }
+                    switch (view.getId()) {
+                        case R.id.btn_app_add:
+                            onAdd(mRequestModel);
+                            break;
+                        case R.id.btn_app_remove:
+                            onRemove(mRequestModel);
+                            break;
+                        case R.id.layout_searchItem:
+                            mCallback.onItemClicked(model);
+                            break;
+                    }
+                }
+        ).start();
     }
 
     private void onAdd(@NonNull RequestModel model) {
+        mClickedAdd = !mClickedAdd;
         mClickedRemove = false;
-        int add = mClickedAdd ? 1 : 0;
-        int newValue = mCounting + add;
 
-        mReport = new ReportModel(model.getTitle(), mClickedAdd, false);
+        int addCount = mClickedAdd ? 1 : 0;
 
-        if(mClickedAdd) {
-            mCallback.onReportAdd(model);
-            mButtonAdd.setImageResource(R.drawable.ic_arrow_voted);
-        } else {
-            mCallback.onReportRemove(model);
-            mButtonAdd.setImageResource(R.drawable.ic_arrow_vote);
-        }
-
-        mButtonRemove.setImageResource(R.drawable.ic_arrow_vote);
-        mDbReport.editReport(mReport);
-
-        mActivity.runOnUiThread(
-                () -> mTextCounting.setText(String.valueOf(newValue))
-        );
+        setRequest(model, mClickedAdd, addCount);
     }
 
     private void onRemove(@NonNull RequestModel model) {
         mClickedAdd = false;
-        int remove = mClickedRemove ? -1 : 0;
-        int newValue = mCounting + remove;
+        mClickedRemove = !mClickedRemove;
 
-        mReport = new ReportModel(model.getTitle(), false, mClickedRemove);
+        int addCount = mClickedRemove ? -1 : 0;
 
-        if(mClickedRemove) {
-            mCallback.onReportRemove(model);
+        setRequest(model, !mClickedRemove, addCount);
+    }
+
+    private void setRequest(RequestModel model, boolean add, int addCount) {
+
+        if (mClickedRemove) {
             mButtonRemove.setImageResource(R.drawable.ic_arrow_voted);
         } else {
-            mCallback.onReportAdd(model);
             mButtonRemove.setImageResource(R.drawable.ic_arrow_vote);
         }
 
-        mButtonAdd.setImageResource(R.drawable.ic_arrow_vote);
+        if (mClickedAdd) {
+            mButtonAdd.setImageResource(R.drawable.ic_arrow_voted);
+        } else {
+            mButtonAdd.setImageResource(R.drawable.ic_arrow_vote);
+        }
+
+        mReport = new ReportModel(model.getTitle(), mClickedAdd, mClickedRemove);
         mDbReport.editReport(mReport);
 
+        //
+
+        final int counting = mCounting + addCount;
+
+        int amount = Math.max(mLatestCount - counting, counting - mLatestCount);
+        for (int i = 0; i < amount; i++) {
+            if (add) {
+                mCallback.onReportAdd(model);
+                mRequestModel.setWantAdding(mRequestModel.getWantAdding() + 1);
+            } else {
+                mCallback.onReportRemove(model);
+                mRequestModel.setWantDeletion(mRequestModel.getWantDeletion() + 1);
+            }
+        }
+
+        mLatestCount = counting;
         mActivity.runOnUiThread(
-                () -> mTextCounting.setText(String.valueOf(newValue))
+                () -> mTextCounting.setText(String.valueOf(counting))
         );
     }
+
 
     @Override
     public void showIcon(String url) {
@@ -234,18 +243,25 @@ public class ItemAdapter extends RecyclerView.ViewHolder
             mButtonRemove.setImageResource(R.drawable.ic_arrow_vote);
         }
 
-        final int drawCount = value;
+        mLatestCount = value;
         mActivity.runOnUiThread(
                 () -> {
                     mLayoutReport.setVisibility(View.VISIBLE);
-                    mTextCounting.setText(String.valueOf(drawCount));
+                    mTextCounting.setText(String.valueOf(mLatestCount));
                 }
         );
     }
 
+    @Override
+    public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
+        mCallback.onException(throwable);
+    }
+
     public interface onListItemClickListener extends ExceptionCallback.onExceptionListener {
         void onReportAdd(RequestModel model);
+
         void onReportRemove(RequestModel model);
+
         void onItemClicked(SearchModel model);
     }
 

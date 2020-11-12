@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_app_element"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    app:cardCornerRadius="0dp"
+    android:background="@color/colorBackground"
+
+    android:orientation="vertical"
+    app:cardElevation="0dp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView_icon_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBackground"
+        app:cardBackgroundColor="@color/colorBackground"
+        app:cardCornerRadius="20dp"
+        app:cardUseCompatPadding="true">
+
+        <ImageView
+            android:id="@+id/icon_appItem_small"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:contentDescription="@string/disc_app_card" />
+
+        <ProgressBar
+            android:id="@+id/progress_iconApp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone" />
+    </androidx.cardview.widget.CardView>
+
+
+    <TextView
+        android:id="@+id/title_appItem_small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/colorBackground"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:inputType="none"
+        android:maxLines="2"
+        android:text="@string/default_text_app_title"
+        android:textColor="@android:color/black"
+        android:textColorHint="#000000"
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:id="@+id/starLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="10dp">
+
+        <TextView
+            android:id="@+id/star_appItem_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="@string/default_start_value"
+            android:textColor="#7E7E7E"
+            android:textColorHint="#717171"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/star_icon_appItem_small"
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:baselineAlignBottom="false"
+            app:srcCompat="@drawable/star"
+            tools:ignore="ContentDescription" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

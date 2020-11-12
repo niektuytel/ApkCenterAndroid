@@ -2,14 +2,13 @@ package com.pukkol.apkcenter.data.remote.api;
 
 import androidx.annotation.NonNull;
 
-import com.pukkol.apkcenter.data.remote.api.apk.ApiApkService;
 import com.pukkol.apkcenter.data.remote.api.app.ApiAppService;
 import com.pukkol.apkcenter.data.remote.api.error.ApiErrorService;
 import com.pukkol.apkcenter.data.remote.api.main.ApiMainService;
 import com.pukkol.apkcenter.data.remote.api.search.ApiAboutUsService;
-import com.pukkol.apkcenter.data.remote.api.www.ApiApkComboService;
 import com.pukkol.apkcenter.data.remote.api.search.ApiReportService;
 import com.pukkol.apkcenter.data.remote.api.search.ApiSearchService;
+import com.pukkol.apkcenter.data.remote.api.www.ApiApkComboService;
 import com.pukkol.apkcenter.util.API;
 
 import retrofit2.Retrofit;
@@ -66,11 +65,6 @@ public class RetroClient {
     @NonNull
     public static ApiAppService getAppService() {
         return getRetrofitInstance().create(ApiAppService.class);
-    }
-
-    @NonNull
-    public static ApiApkService getApkService() {
-        return getRetrofitInstance().create(ApiApkService.class);
     }
 
     @NonNull

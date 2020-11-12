@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.Nullable;
@@ -14,8 +15,8 @@ import com.pukkol.apkcenter.data.local.sql.error.DbErrorProfile;
 import com.pukkol.apkcenter.data.local.sql.installed.DbInstalledProfile;
 import com.pukkol.apkcenter.data.local.sql.report.DbReportProfile;
 import com.pukkol.apkcenter.data.local.sql.search.DbSearchProfile;
-import com.pukkol.apkcenter.data.model.local.ReportModel;
 import com.pukkol.apkcenter.data.model.AppSmallModel;
+import com.pukkol.apkcenter.data.model.local.ReportModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     private static SQLiteDatabase mDb;
 
+    private static final String TAG = DatabaseHelper.class.getSimpleName();
+
+
     public static DatabaseHelper getInstance(Context ctx) {
+
 
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
@@ -182,14 +187,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-    public boolean updateStringOnName(String tableName, String setName, String setNewValue, String whereName, String whereValue) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(setName, setNewValue);
-
-        int result = mDb.update(tableName, contentValues, whereName + " = ? ", new String[]{whereValue});
-        return (result != 0);
-    }
-
     public boolean updateContent(String tableName, ContentValues contentValues, String whereName, String isValue) {
         int result = mDb.update(tableName, contentValues, whereName + " = ? ", new String[]{isValue});
         return (result != 0);
@@ -213,28 +210,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-
-
-
-
-
+    public boolean updateStringOnName(String tableName, String setName, String setNewValue, String whereName, String whereValue) {
+        return updateOnName(tableName, setName, setNewValue, whereName, whereValue);
+    }
 
     public boolean updateLongOnName(String tableName, String setName, Long setNewValue, String whereName, String whereValue) {
+        return updateOnName(tableName, setName, setNewValue, whereName, whereValue);
+    }
+
+    public <Value> boolean updateOnName(String tableName, String setName, Value valueOfName, String whereName, String whereValue) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(setName, setNewValue);
+
+        if (valueOfName instanceof String) {
+            contentValues.put(setName, (String) valueOfName);
+        } else if (valueOfName instanceof Integer) {
+            contentValues.put(setName, (Integer) valueOfName);
+        } else if (valueOfName instanceof Long) {
+            contentValues.put(setName, (Long) valueOfName);
+        } else if (valueOfName instanceof Boolean) {
+            contentValues.put(setName, (Boolean) valueOfName);
+        } else {
+            Log.e(TAG, "Missing giving instance in updateOnName()");
+        }
 
         int result = mDb.update(tableName, contentValues, whereName + " = ? ", new String[]{whereValue});
         return (result != 0);
     }
 
-    public Long getLongOnName(String tableName, String columnName, String columnValue, String columnReturnValue) {
 
-        String query = "SELECT * FROM " + tableName + " WHERE " + columnName + " = '" + columnValue + "'";
+    public <Value> Value getValueOnName(String tableName, String whereName, String isValue, String returnName, Value defaultValue) {
+        String query = "SELECT * FROM " + tableName + " WHERE " + whereName + " = '" + isValue + "'";
+
+
         @SuppressLint("Recycle") Cursor cursor = mDb.rawQuery(query, null);
-        long value = 0;
+        Value value = defaultValue;
 
-        if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
-            value = cursor.getLong(cursor.getColumnIndexOrThrow(columnReturnValue));
+        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+            int index = cursor.getColumnIndexOrThrow(returnName);
+
+            if (value instanceof String) {
+                value = (Value) cursor.getString(index);
+            } else if (value instanceof Long) {
+                value = (Value) (Object) cursor.getLong(index);
+            } else if (value instanceof Integer) {
+                value = (Value) (Object) cursor.getInt(index);
+            } else if (value instanceof Boolean) {
+                value = (Value) (Object) (cursor.getInt(index) == 1);
+            } else {
+                Log.e(TAG, "Missing giving instance in getValueOnName()");
+            }
 
             //clean
             cursor.close();

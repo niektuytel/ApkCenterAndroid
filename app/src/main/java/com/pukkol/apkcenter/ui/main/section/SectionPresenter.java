@@ -26,11 +26,10 @@ public class SectionPresenter
         Thread.UncaughtExceptionHandler
 {
     private static final String TAG = SectionActivity.class.getSimpleName();
-    private static final Integer APPS_ROW_INDEX = 4;
 
     private final Activity mActivity;
     private final SectionMvpViewMy mSectionView;
-    private final SectionListAdapter mSectionAdapter;
+    private SectionListAdapter mSectionAdapter;
 
     private List<AppSmallModel> mApplications;
 
@@ -41,11 +40,8 @@ public class SectionPresenter
         // load local Storage
         DbSearchHelper dbSearch = new DbSearchHelper(mActivity, this);
         mApplications = dbSearch.getRecommended();
-        Log.i(TAG, "current section: " + currentSection);
-
 
         mSectionAdapter = new SectionListAdapter(mActivity, this);
-
     }
 
     public void onStart() {
@@ -71,12 +67,11 @@ public class SectionPresenter
         // app sections
         ArrayList<AppSmallSectionModel> sections = new ArrayList<>();
         ArrayList<AppSmallModel> rowApps = new ArrayList<>();
-        for(int i=0; i < applications.size(); i++)
-        {
+        for (int i = 0; i < applications.size(); i++) {
             rowApps.add(applications.get(i));
 
-            if(i > 0 && i % APPS_ROW_INDEX == 0 || i == (applications.size() - 1))
-            {
+            int maxIndex = SectionListAdapter.MAX_ROW_INDEX - 1;
+            if (i > 0 && i % maxIndex == 0 || i == (applications.size() - 1)) {
                 AppSmallSectionModel section = new AppSmallSectionModel(rowApps);
                 sections.add(section);
                 rowApps = new ArrayList<>();
@@ -85,6 +80,22 @@ public class SectionPresenter
 
         mSectionAdapter.newData(sections);
         mSectionView.showApplications(mSectionAdapter);
+    }
+
+
+    @Override
+    public void onClickItem(AppSmallModel model) {
+        if (model == null) return;
+
+        Intent intent = new Intent(mActivity, AppActivity.class);
+        intent.putExtra("title", model.getTitle());
+        intent.putExtra("icon", model.getIcon());
+        intent.putExtra("star", model.getStar());
+        mActivity.startActivity(intent);
+    }
+
+    @Override
+    public void onClickSection(String title) {
     }
 
     @Override
@@ -97,18 +108,4 @@ public class SectionPresenter
         new ErrorHandler(mActivity, throwable);
         mSectionView.showError();
     }
-
-    @Override
-    public void onClickItem(AppSmallModel model) {
-        if(model == null) return;
-
-        Intent intent = new Intent(mActivity, AppActivity.class);
-        intent.putExtra("title", model.getTitle());
-        intent.putExtra("icon", model.getIcon());
-        intent.putExtra("star", model.getStar());
-        mActivity.startActivity(intent);
-    }
-
-    @Override
-    public void onClickSection(String title) { }
 }

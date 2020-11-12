@@ -8,11 +8,12 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 
 import com.pukkol.apkcenter.data.local.sql.DatabaseHelper;
-import com.pukkol.apkcenter.data.model.application.AppModel;
 import com.pukkol.apkcenter.data.model.AppSmallModel;
+import com.pukkol.apkcenter.data.model.application.AppModel;
 import com.pukkol.apkcenter.data.remote.api.RetroClient;
 import com.pukkol.apkcenter.data.remote.api.app.ApiAppService;
 import com.pukkol.apkcenter.error.ExceptionCallback.onExceptionListener;
+import com.pukkol.apkcenter.util.API;
 import com.pukkol.apkcenter.util.DeviceUtil;
 
 import java.io.IOException;
@@ -40,10 +41,12 @@ public class DbSearchHelper implements Thread.UncaughtExceptionHandler {
     private static final int iStorageLimit = DbSearchProfile.Limit.STORAGE_INDEX;
     private static final int iRecommendedLimit = DbSearchProfile.Limit.RECOMMENDED_INDEX;
 
+    private final Context mContext;
     private final DatabaseHelper mDb;
     private final onExceptionListener mCallback;
 
     public DbSearchHelper(Context context, onExceptionListener exceptionCallback) {
+        mContext = context;
         mDb = DatabaseHelper.getInstance(context);
         mCallback = exceptionCallback;
         onUpdate();
@@ -65,7 +68,7 @@ public class DbSearchHelper implements Thread.UncaughtExceptionHandler {
     }
 
     public void updateTime(String title, String maxLimit){
-        long lastUpdate = mDb.getLongOnName(sTableName, sColumnTitleName, title, sColumnLatestUpdateName);
+        long lastUpdate = mDb.getValueOnName(sTableName, sColumnTitleName, title, sColumnLatestUpdateName, (long) 0);
         long oneDay = 1000 * 60 * 60 * 24;
         long currentTime = System.currentTimeMillis();
 
@@ -95,6 +98,8 @@ public class DbSearchHelper implements Thread.UncaughtExceptionHandler {
 
     // response to app
     public boolean cleanDeletedData() {
+        if (!API.isNetworkAvailable(mContext)) return false;
+
         List<String> titles = getTitles();
         ApiAppService service = RetroClient.getAppService();
         boolean removedSome = false;

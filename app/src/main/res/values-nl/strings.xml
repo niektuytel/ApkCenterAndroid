@@ -7,7 +7,7 @@
     <string name="installing_text">Aan het Installeren</string>
     <string name="install_done_text">Al Geïnstalleerd</string>
     <string name="about_this_app">Over deze app</string>
-    <string name="somethingWrong">Er is iets found gegaan</string>
+    <string name="somethingWrong">Er is iets fout gegaan</string>
     <string name="internalError">Intern server error</string>
     <string name="btn_open_app">Open App</string>
     <string name="txt_limit">limiet</string>

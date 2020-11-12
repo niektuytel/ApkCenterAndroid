@@ -18,54 +18,55 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.pukkol.apkcenter.R;
 
-//import com.bumptech.glide.Glide;
-//import com.bumptech.glide.request.target.CustomTarget;
-//import com.bumptech.glide.request.transition.Transition;
-
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.RowHolder> {
 
-    private Activity mContext;
+    private Activity mActivity;
     private String[] mImagesUrls;
-    private int mMaxHeight;
+    private int mHeight;
+    private int mWidth;
 
-    public ImagesAdapter(Activity context, String[] images, int maxHeight)
-    {
-        mContext = context;
+    public ImagesAdapter(Activity activity, String[] images, int height) {
+        mActivity = activity;
         mImagesUrls = images;
-        mMaxHeight = maxHeight;
+        mHeight = height;
     }
 
     @NonNull
     @Override
     @SuppressLint("InflateParams")
-    public RowHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-    {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_app_info, null);
+    public RowHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.element_image, null);
         v.setElevation(0);
-        v.setMinimumHeight(mMaxHeight);
+        v.setMinimumHeight(mHeight);
 
         return new RowHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RowHolder holder, int position)
-    {
-        String url = mImagesUrls[position];
+    public void onBindViewHolder(@NonNull RowHolder holder, int position) {
+        new Thread(
+                () -> {
+                    String url = mImagesUrls[position];
+                    Glide.with(holder.itemView)
+                            .asBitmap()
+                            .load(url)
+                            .into(new CustomTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    double diff = (double) mHeight / (double) resource.getHeight();
+                                    final int width = (int) Math.round((double) resource.getWidth() * diff);
 
-        Glide.with(holder.itemView)
-                .asBitmap()
-                .load(url)
-                .into(new CustomTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        double diff = (double) mMaxHeight / (double) resource.getHeight();
-                        int newWidth = (int)Math.round((double) resource.getWidth() * diff);
-                        holder.app_view.setImageBitmap(Bitmap.createScaledBitmap(resource, newWidth, mMaxHeight, false));
-                    }
+                                    mActivity.runOnUiThread(
+                                            () -> holder.app_view.setImageBitmap(Bitmap.createScaledBitmap(resource, width, mHeight, false))
+                                    );
+                                }
 
-                    @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) { }
-                });
+                                @Override
+                                public void onLoadCleared(@Nullable Drawable placeholder) {
+                                }
+                            });
+                }
+        ).start();
     }
 
     @Override
@@ -85,7 +86,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.RowHolder>
     }
 
     public int getMaxHeight() {
-        return mMaxHeight;
+        return mHeight;
     }
 
     public String[] getImageUrls() {

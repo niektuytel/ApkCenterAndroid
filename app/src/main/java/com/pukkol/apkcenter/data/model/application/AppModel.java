@@ -1,9 +1,10 @@
 package com.pukkol.apkcenter.data.model.application;
 
-import com.google.gson.annotations.SerializedName;
+import android.net.Uri;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import androidx.annotation.NonNull;
+
+import com.google.gson.annotations.SerializedName;
 
 public class AppModel {
     @SerializedName("title")
@@ -21,6 +22,9 @@ public class AppModel {
     @SerializedName("limit")
     private String limit;
 
+    @SerializedName("category")
+    private String category;
+
     public AppModel(String title, String websiteUrl, ApkModel apk, boolean popular, String limit) {
         this.title = title;
         this.websiteUrl = websiteUrl;
@@ -29,6 +33,7 @@ public class AppModel {
         this.limit = limit;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "AppModel{" +
@@ -44,8 +49,8 @@ public class AppModel {
         return title;
     }
 
-    public String getDecodedTitle() throws UnsupportedEncodingException {
-        return URLDecoder.decode(title, "UTF-8");
+    public String getDecodedTitle() {
+        return Uri.decode(title);
     }
 
     public void setTitle(String title) {
@@ -82,5 +87,13 @@ public class AppModel {
 
     public void setLimit(String limit) {
         this.limit = limit;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

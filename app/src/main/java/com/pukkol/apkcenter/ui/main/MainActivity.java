@@ -1,6 +1,5 @@
 package com.pukkol.apkcenter.ui.main;
 
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -22,11 +21,10 @@ public class MainActivity
         BaseActivity
     implements
         MainMvpView,
-        TabLayout.OnTabSelectedListener,
-        BaseActivity.OnBaseReloadListener
+        TabLayout.OnTabSelectedListener
 {
     private TabLayout mLayoutTab;
-    private RecyclerView mLayoutActivity;
+    private RecyclerView mLayoutContent;
 
     private MainPresenter mMainPresenter;
 
@@ -36,18 +34,29 @@ public class MainActivity
     }
 
     @Override
-    protected Object getActivityLayout() {
-        mLayoutActivity = findViewById(R.id.apps_layout);
-        return mLayoutActivity;
+    protected Object getLayoutContent() {
+        // set recyclerview
+        mLayoutContent = findViewById(R.id.layout_content);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mLayoutContent.setLayoutManager(layoutManager);
+
+        return mLayoutContent;
     }
 
     @Override
-    protected BaseActivity.OnBaseReloadListener getCallback() {
-        return this;
+    protected void onContentCalled() {
+        if (mMainPresenter == null) return;
+
+        new Thread(
+                () -> mMainPresenter.onReload(true)
+        ).start();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         mLayoutTab = findViewById(R.id.tabLayout);
@@ -56,48 +65,29 @@ public class MainActivity
         mLayoutTab.addOnTabSelectedListener(this);
         buttonSearch.setOnClickListener(this);
 
-        mLayoutActivity.setLayoutManager(
-                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        );
 
         // send local stored errors to api
-        new Thread( () -> new ErrorHandler(this, null) ).start();
+        new Thread(() -> new ErrorHandler(this, null)).start();
 
         // setup
-        new Thread (
-                () -> mMainPresenter = new MainPresenter(this,this)
-        ).start();
+        new Thread(() -> mMainPresenter = new MainPresenter(this, this)).start();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (mMainPresenter == null) return;
-
-        new Thread( () -> mMainPresenter.onStart() ).start();
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        if (mMainPresenter == null) return;
+//        new Thread( () -> mMainPresenter.onStart() ).start();
+//    }
 
     @Override
     public void onClick(@NonNull View view) {
         super.onClick(view);
         if (view.getId() == R.id.button_Search) {
             Intent intent = new Intent(this, SearchActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            PendingIntent pendingIntent =
-                    PendingIntent.getActivity(this, 0, intent, 0);
-            try {
-                pendingIntent.send();
-            } catch (PendingIntent.CanceledException e) {
-                mMainPresenter.onException(e);
-            }
+            intent.putExtra("search", "");
+            startActivity(intent);
         }
-    }
-
-    @Override
-    public void onBaseReload() {
-        new Thread(
-                ()->mMainPresenter.onReload(true)
-        ).start();
     }
 
     @Override
@@ -115,7 +105,7 @@ public class MainActivity
 
     @Override
     public void showApplications(SectionListAdapter adapter) {
-        runOnUiThread( () -> mLayoutActivity.setAdapter(adapter) );
+        runOnUiThread(() -> mLayoutContent.setAdapter(adapter));
     }
 
     @Override

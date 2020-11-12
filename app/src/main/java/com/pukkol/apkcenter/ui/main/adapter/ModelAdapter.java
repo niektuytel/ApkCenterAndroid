@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,97 +16,81 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.pukkol.apkcenter.R;
 import com.pukkol.apkcenter.data.model.AppSmallModel;
-import com.pukkol.apkcenter.util.DeviceUtil;
 
 public class ModelAdapter extends RecyclerView.ViewHolder
-    implements
+        implements
         View.OnClickListener,
-        Thread.UncaughtExceptionHandler
-{
+        Thread.UncaughtExceptionHandler {
+    private ProgressBar mProgressbar;
     private ImageView mImageIcon;
     private TextView mTextTitle;
     private TextView mTextStar;
 
     private final Activity mActivity;
-    private final Integer mResourceId;
     private final SectionAdapter.onActionListener mCallback;
 
     private AppSmallModel mModel;
-    private int mDeviceWidth;
-    private int mRowAmount;
+    private int mIconWidth;
+    private int mIconHeight;
 
-    public ModelAdapter(Activity activity, View itemView, Integer modelResourceId, Integer rowAmount, SectionAdapter.onActionListener callback) {
+    public ModelAdapter(Activity activity, View itemView, int width, int height, SectionAdapter.onActionListener callback) {
         super(itemView);
         mActivity = activity;
-        mResourceId = modelResourceId;
-        mRowAmount = rowAmount;
+        mIconWidth = width;
+        mIconHeight = height;
         mCallback = callback;
 
+        mProgressbar = itemView.findViewById(R.id.progress_iconApp);
         mImageIcon = itemView.findViewById(R.id.icon_appItem_small);
         mTextTitle = itemView.findViewById(R.id.title_appItem_small);
         mTextStar = itemView.findViewById(R.id.star_appItem_small);
 
         itemView.setOnClickListener(this);
 
-        mDeviceWidth = DeviceUtil.displaySize(mActivity.getWindow()).x;
+        ViewGroup.LayoutParams layoutParams = mImageIcon.getLayoutParams();
+        layoutParams.height = height; //this is in pixels
+        layoutParams.width = width; //this is in pixels
+        mImageIcon.setLayoutParams(layoutParams);
+
+        mTextTitle.setWidth(width);
     }
 
     @SuppressLint("SetTextI18n")
-    public void onCreate(AppSmallModel model){
+    public void onCreate(@NonNull AppSmallModel model) {
         mModel = model;
 
-        if(mResourceId == R.layout.element_app_medium) {
-            int newSize = (mDeviceWidth / mRowAmount) - Math.round( DeviceUtil.pxFromDp(mActivity, 21) );
-
-            mActivity.runOnUiThread(
-                    () -> {
-                        Glide.with(mActivity)
-                                .asBitmap()
-                                .load(model.getIcon())
-                                .into(new CustomTarget<Bitmap>() {
-                                    @Override
-                                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                        mImageIcon.setImageBitmap(Bitmap.createScaledBitmap(resource, newSize, newSize, false));
-                                    }
-
-                                    @Override
-                                    public void onLoadCleared(@Nullable Drawable placeholder) { }
-                                });
-
-                        mImageIcon.setMaxWidth(newSize);
-                        mImageIcon.setMaxHeight(newSize);
-                        mTextTitle.setWidth(newSize);
-                    }
-            );
-        }
-        else if (mResourceId == R.layout.element_app_small) {
-            mActivity.runOnUiThread(
-                    ()-> Glide.with(mActivity)
-                            .load(model.getIcon())
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(mImageIcon)
-            );
-        }
-
-
-        int maxLen = 35;
         String title = Uri.decode(model.getTitle());
-        if(title.length() > maxLen)
-        {
-            mTextTitle.setText(title.substring(0, maxLen - 3) + "...");
-        } else {
-            mTextTitle.setText(title);
-        }
-
-        // star
         String star = String.valueOf(model.getStar());
-        mTextStar.setText(star);
 
+        mActivity.runOnUiThread(
+                () -> {
+                    mTextTitle.setText(title);
+                    mTextStar.setText(star);
+                    mProgressbar.setVisibility(View.VISIBLE);
+                }
+        );
+        Glide.with(mActivity)
+                .asBitmap()
+                .load(model.getIcon())
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        mActivity.runOnUiThread(
+                                () -> {
+                                    mImageIcon.setImageBitmap(Bitmap.createScaledBitmap(resource, mIconWidth, mIconHeight, false));
+                                    mProgressbar.setVisibility(View.GONE);
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                    }
+                });
     }
 
 

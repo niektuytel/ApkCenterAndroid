@@ -8,7 +8,7 @@
     android:overScrollMode="never">
 
     <include
-        android:id="@+id/layout_bar"
+        android:id="@+id/layout_app_bar"
         layout="@layout/layout_bar_app"
         />
 
@@ -19,27 +19,12 @@
         android:fillViewport="false"
         android:overScrollMode="never"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        android:visibility="gone"
-        >
+        android:visibility="visible">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <include
-                android:id="@+id/layout_app"
-                android:visibility="gone"
-                layout="@layout/layout_main_app"
-            />
-
-            <include
-                android:id="@+id/layout_website"
-                android:visibility="gone"
-                layout="@layout/layout_main_www"
-            />
-
-        </LinearLayout>
+        <include
+            android:id="@+id/layout_app"
+            layout="@layout/element_app"
+            android:visibility="visible" />
 
     </androidx.core.widget.NestedScrollView>
 

@@ -10,38 +10,32 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.pukkol.apkcenter.R;
+import com.pukkol.apkcenter.data.model.SearchModel;
 import com.pukkol.apkcenter.data.model.remote.AboutUsModel;
 import com.pukkol.apkcenter.data.model.remote.RequestModel;
-import com.pukkol.apkcenter.data.model.SearchModel;
-import com.pukkol.apkcenter.error.ErrorHandler;
-import com.pukkol.apkcenter.error.ExceptionCallback;
+import com.pukkol.apkcenter.ui.base.BaseActivity;
 import com.pukkol.apkcenter.util.DeviceUtil;
 
 
 public class SearchActivity
     extends
-        AppCompatActivity
+        BaseActivity
     implements
         SearchMvpView,
         TabLayout.OnTabSelectedListener,
         View.OnClickListener,
-        TextWatcher,
-        Thread.UncaughtExceptionHandler,
-        ExceptionCallback.onExceptionListener
+        TextWatcher
 {
 
     private LinearLayout mLayoutSearchBar;
     private TabLayout mLayoutMenu;
-    private RecyclerView mLayoutSearchResults;
-    private ConstraintLayout mLayoutConnection;
-    private ConstraintLayout mLayoutError;
+    private RecyclerView mLayoutContent;
     private ConstraintLayout mLayoutAbout;
 
     private EditText mTextSearch;
@@ -52,27 +46,59 @@ public class SearchActivity
     private String[] mMenuValues;
     private String mLatestSearchValue = null;
     private int mLatestTabIndex = 0;
+    private String mLatestHint;
+
+    @Override
+    protected int getLayoutResourceId() {
+        return R.layout.activity_search;
+    }
+
+    @Override
+    protected Object getLayoutContent() {
+        // set recyclerview
+        mLayoutContent = findViewById(R.id.layout_content);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mLayoutContent.setLayoutManager(layoutManager);
+
+        return mLayoutContent;
+    }
+
+    @Override
+    protected void onContentCalled() {
+        if (mTextSearch == null) return;
+
+        new Thread(
+                () -> {
+                    if (mTextSearch.getHint() == getString(R.string.search_hint)) {
+                        if (mPresenterSearch == null) return;
+                        mPresenterSearch.onSearch(currentInput());
+                    } else if (mTextSearch.getHint() == getString(R.string.request_hint_text)) {
+                        if (mPresenterRequest == null) return;
+                        mPresenterRequest.onSearch(currentInput());
+                    } else if (mTextSearch.getHint() == "") {
+                        if (mPresenterSearch == null) return;
+                        mPresenterSearch.onAboutUs();
+                    }
+                }
+        ).start();
+
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DeviceUtil.fullDisplay(this, R.layout.activity_search);
 
         mTextSearch = findViewById(R.id.eText_searchBox);
-        ImageView buttonHome = findViewById(R.id.img_toHome);
         mLayoutSearchBar = findViewById(R.id.layout_searchBar);
         mLayoutMenu = findViewById(R.id.tabLayout);
-        mLayoutSearchResults = findViewById(R.id.layout_searchResults);
-        mLayoutConnection = findViewById(R.id.layout_connection);
-        mLayoutError = findViewById(R.id.layout_error);
         mLayoutAbout = findViewById(R.id.layout_AboutUs);
+        ImageView buttonPrevious = findViewById(R.id.img_toHome);
 
-        buttonHome.setOnClickListener(this);
+        buttonPrevious.setOnClickListener(this);
         mLayoutMenu.addOnTabSelectedListener(this);
         mTextSearch.addTextChangedListener(this);
 
-        mLayoutSearchResults.setLayoutManager(
-                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        );
         mMenuValues = this.getResources().getStringArray(R.array.default_menu);
 
         new Thread(
@@ -88,28 +114,26 @@ public class SearchActivity
 
     @Override
     public void onTabSelected(@NonNull TabLayout.Tab tab) {
-        if(mLatestTabIndex == tab.getPosition()) return;
+        if (mLatestTabIndex == tab.getPosition()) return;
         mLatestTabIndex = tab.getPosition();
+        DeviceUtil.hideKeyboard(this);
 
-        new Thread(
-                () -> {
-                    DeviceUtil.hideKeyboard(this);
-                    switch (tab.getPosition()) {
-                        case 0:
-                            mPresenterSearch.onSearch("");
-                            break;
-                        case 1:
-                            mPresenterRequest.onSearch("");
-                            break;
-                        case 2:
-                            mPresenterRequest.onAboutUs();
-                            break;
-                        default:
-                            showError();
-                    }
-                }
-        ).start();
+        switch (tab.getPosition()) {
+            case 0:
+                mTextSearch.setHint(R.string.search_hint);
+                break;
+            case 1:
+                mTextSearch.setHint(R.string.request_hint_text);
+                break;
+            case 2:
+                mTextSearch.setHint("");
+                break;
+            default:
+                showError();
+                return;
+        }
 
+        onContentCalled();
     }
 
     @Override
@@ -120,6 +144,7 @@ public class SearchActivity
 
     @Override
     public void onClick(@NonNull final View view) {
+        super.onClick(view);
         if (view.getId() == R.id.img_toHome) {
             if(mTextSearch.getText().toString().length() > 0) {
                 mTextSearch.setText("");
@@ -127,8 +152,6 @@ public class SearchActivity
                 DeviceUtil.hideKeyboard(this);
                 finish();
             }
-        } else {
-            showError();
         }
     }
 
@@ -138,37 +161,27 @@ public class SearchActivity
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         String input = mTextSearch.getText().toString();
-        String hint = mTextSearch.getHint().toString();
 
-        if(mLatestSearchValue == null) {
+        if (mLatestSearchValue == null) {
             mLatestSearchValue = input;
         }
 
-        if(mLatestSearchValue.equals(input)) return;
+        if (mLatestSearchValue.equals(input)) return;
+
         mLatestSearchValue = input;
-
-        new Thread(
-                () -> {
-
-                    showMenu(false);
-
-                    if(hint.equals(this.getString(R.string.search_hint))) {
-                        mPresenterSearch.onSearch(input);
-                    } else if (hint.equals(this.getString(R.string.request_hint_text))){
-                        // search what user mean
-                        mPresenterRequest.onSearch(input);
-                    }
-                }
-        ).start();
+        showMenu(false);
+        onContentCalled();
     }
 
     @Override
     public void afterTextChanged(Editable editable) { }
 
+
     @Override
     public String currentInput() {
         return mTextSearch.getText().toString();
     }
+
 
     @Override
     public void showMenu(boolean updateData) {
@@ -193,31 +206,29 @@ public class SearchActivity
     }
 
     @Override
-    public <T> void showAdapter(ListItemsAdapter<T> adapter, String searchHint) {
+    public <T> void showAdapter(ListItemsAdapter<T> adapter) {
         // check
-        if(mLatestTabIndex != 0 && mLatestTabIndex != 1) {
+        if (mLatestTabIndex > 1) {
             return;
-        } else if(mLayoutSearchResults.getAdapter() != null && mTextSearch.getHint() == searchHint ) {
+        } else if (mLayoutContent.getAdapter() != null && mTextSearch.getHint() == mLatestHint) {
             runOnUiThread(adapter::notifyDataSetChanged);
             return;
         }
 
-        runOnUiThread( () -> mLayoutSearchResults.setAdapter(adapter) );
-
         DeviceUtil.hideKeyboard(this);
         DeviceUtil.showKeyboard(this);
 
+        mLatestSearchValue = "";
+        mLatestHint = mTextSearch.getHint().toString();
+
         runOnUiThread(
                 () -> {
+                    mLayoutContent.setAdapter(adapter);
                     mTextSearch.requestFocus();
-                    mTextSearch.setHint(searchHint);
                     mLayoutMenu.setVisibility(View.VISIBLE);
                     mLayoutSearchBar.setVisibility(View.VISIBLE);
-                    mLayoutConnection.setVisibility(View.GONE);
-                    mLayoutError.setVisibility(View.GONE);
-                    mLayoutSearchResults.setVisibility(View.VISIBLE);
                     mLayoutAbout.setVisibility(View.GONE);
-
+                    mLayoutContent.setVisibility(View.VISIBLE);
                 }
         );
     }
@@ -227,12 +238,12 @@ public class SearchActivity
         // check
         if(mLatestTabIndex != 2) {
             return;
-        }else if(mTextSearch.getHint() == "") {
-            return;
         }
 
         DeviceUtil.hideKeyboard(this);
+
         mLatestSearchValue = "";
+        mLatestHint = "";
 
         TextView phoneNumber = findViewById(R.id.text_about_phoneNumber);
         TextView emailAddress = findViewById(R.id.text_about_email);
@@ -240,12 +251,9 @@ public class SearchActivity
 
         runOnUiThread(
                 () -> {
-                    mTextSearch.setHint("");
                     mLayoutSearchBar.setVisibility(View.GONE);
-                    mLayoutSearchResults.setVisibility(View.GONE);
-                    mLayoutConnection.setVisibility(View.GONE);
-                    mLayoutError.setVisibility(View.GONE);
                     mLayoutAbout.setVisibility(View.VISIBLE);
+                    mLayoutContent.setVisibility(View.GONE);
 
                     phoneNumber.setText(model.getPhoneNumber());
                     emailAddress.setText(model.getEmail());
@@ -258,11 +266,11 @@ public class SearchActivity
 
     @Override
     public void showError() {
+        super.showError();
+        if (mLayoutMenu == null) return;
+
         runOnUiThread(
-                ()->{
-                    mLayoutSearchResults.setVisibility(View.GONE);
-                    mLayoutConnection.setVisibility(View.GONE);
-                    mLayoutError.setVisibility(View.VISIBLE);
+                () -> {
                     mLayoutMenu.setVisibility(View.GONE);
                     mLayoutSearchBar.setVisibility(View.GONE);
                     mLayoutAbout.setVisibility(View.GONE);
@@ -272,27 +280,15 @@ public class SearchActivity
 
     @Override
     public void showErrorInternet() {
+        super.showErrorInternet();
+        if (mLayoutMenu == null) return;
+
         runOnUiThread(
-                ()->{
-                    mLayoutSearchResults.setVisibility(View.GONE);
-                    mLayoutConnection.setVisibility(View.VISIBLE);
-                    mLayoutError.setVisibility(View.GONE);
+                () -> {
                     mLayoutMenu.setVisibility(View.VISIBLE);
                     mLayoutSearchBar.setVisibility(View.VISIBLE);
                     mLayoutAbout.setVisibility(View.GONE);
                 }
         );
     }
-
-    @Override
-    public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
-        onException(throwable);
-    }
-
-    @Override
-    public void onException(Throwable throwable) {
-        new ErrorHandler(this, throwable);
-        showError();
-    }
-
 }
