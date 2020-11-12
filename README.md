@@ -16,7 +16,6 @@
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Search_Screenshot_1604961843.png" alt="Your image title" width="250"/>
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Search_Screenshot_1604961870.png" alt="Your image title" width="250"/>
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Search_Screenshot_1604961886.png" alt="Your image title" width="250"/>
-<img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Search_Screenshot_1604961896.png" alt="Your image title" width="250"/>
 </p>
 
 # Application Content display app for downloading + website that is connected to it
