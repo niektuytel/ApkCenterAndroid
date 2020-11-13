@@ -19,7 +19,7 @@ this application is sending all his data to a api: https://github.com/niektuytel
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Main_Screenshot_1605223086.png" alt="Your image title" width="250"/>
 </p>
 
-# search/request/report applications to admin
+# search/request/report applications
 <p align="center">
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Search_Screenshot_1605216652.png" alt="Your image title" width="250"/>
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/Search_Screenshot_1604961843.png" alt="Your image title" width="250"/>
@@ -33,17 +33,7 @@ this application is sending all his data to a api: https://github.com/niektuytel
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/App_Screenshot_1605019974.png" alt="Your image title" width="250"/>
 </p>
 
-# Programmers Extra info
-
-(programmer working on)
-*todos:
-- [Main Activity, Section Activity]
-    need to load more data based on scroll position (small apps)(when database contains some data)
-    
-- [Section Activity]
-    make possible to load data through api (apps section)
-    
-- [ALL]
-    add dagger to project
-
-
+# Programmers Extra info (todos)
+- load more data based on scroll position (when database contains anough data)
+- add more sections to home  
+- add dagger (template injection)
