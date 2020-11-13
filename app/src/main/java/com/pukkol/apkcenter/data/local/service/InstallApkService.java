@@ -202,7 +202,7 @@ public class InstallApkService extends Service
 
         // create
         mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)  // the status icon
+                .setSmallIcon(R.mipmap.ic_launcher_foreground)  // the status icon
                 .setContentTitle("download " + Uri.decode(title)) // the label of the entry
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
@@ -215,7 +215,7 @@ public class InstallApkService extends Service
     private void showErrorNotification() {
         // create
         mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)  // the status icon
+                .setSmallIcon(R.mipmap.ic_launcher_foreground)  // the status icon
                 .setContentTitle("Error on downloading " + Uri.decode(mTitle));
 
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
