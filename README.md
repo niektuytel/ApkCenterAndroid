@@ -13,7 +13,9 @@ so for consuming this application install latest release (if available)
 - ready for use 
     [ if issue let me know -> contact : https://github.com/niektuytel/ApkCenterAdminPanel]
 
-naming convention: https://source.android.com/setup/contribute/code-style
+naming convention (follow):  
+- https://source.android.com/setup/contribute/code-style  
+- https://github.com/ribot/android-guidelines/blob/master/project_and_code_guidelines.md
 
 # display applications
 <p align="center">
