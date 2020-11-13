@@ -13,6 +13,7 @@ so for consuming this application install latest release (if available)
 - ready for use 
     [ if issue let me know -> contact : https://github.com/niektuytel/ApkCenterAdminPanel]
 
+naming convention: https://source.android.com/setup/contribute/code-style
 
 # display applications
 <p align="center">
