@@ -3,8 +3,9 @@
 - able to vote on applications to get added to the store
 - able to vote on applications to get removed from the store
   
-(when there are releases, they will work properly on your device)  
 this application is sending all his data to a api: https://github.com/niektuytel/ApkCenterApi  
+Note: this is builded for local enviroment.
+so for consuming this application install latest release (if available) 
 
 - clone repository build and run it
 - allow all permissions of application in the settings.
