@@ -34,8 +34,3 @@ so for consuming this application install latest release (if available)
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/App_Screenshot_1605208677.png" alt="Your image title" width="250"/>
 <img src="https://github.com/niektuytel/ApkCenterAndroid/blob/master/github_sceenshots/App_Screenshot_1605019974.png" alt="Your image title" width="250"/>
 </p>
-
-# Programmers Extra info (todos)
-- load more data based on scroll position (when database contains anough data)
-- add more sections to home  
-- add dagger (template injection)
