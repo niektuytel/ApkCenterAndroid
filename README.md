@@ -5,6 +5,9 @@
 
 this application is sending all his data to a api: https://github.com/niektuytel/ApkCenterApi  
 
+
+
+
 - clone repository build and run it
 - allow all permissions of application in the settings.
 - allow `download unknown apps` in application settings.
