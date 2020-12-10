@@ -1,4 +1,10 @@
 # ApkCenterAndroid (app)
+<p align="center">
+<img src="xxx" alt="Todo set icon application" width="150"/>
+</p>
+
+NOTE: this code will not been updated (get other program to complete the same task with Google Play)
+
 - able to download applications on your device
 - able to vote on applications to get added to the store
 - able to vote on applications to get removed from the store
