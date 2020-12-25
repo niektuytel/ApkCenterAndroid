@@ -1,4 +1,4 @@
-# ApkCenterAndroid (app)
+# ApkCenterAndroid (app) DEPRECATED
 <p align="center">
 <img src="xxx" alt="Todo set icon application" width="150"/>
 </p>
